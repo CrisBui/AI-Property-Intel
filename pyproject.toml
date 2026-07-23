@@ -1,0 +1,44 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "property-intel"
+version = "0.1.0"
+description = "AI Property Intelligence learning MVP"
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.0",
+    "pydantic-settings>=2.0",
+    "sqlalchemy>=2.0",
+    "psycopg[binary]>=3.1",
+    "alembic>=1.13",
+    "chromadb>=0.5",
+    "langchain>=0.3",
+    "langchain-core>=0.3",
+    "langchain-openai>=0.2",
+    "langchain-google-genai>=2.0",
+    "langchain-xai>=0.2",
+    "langchain-groq>=0.2",
+    "langgraph>=0.2",
+    "python-dotenv>=1.0",
+    "typer>=0.12",
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.32",
+    "httpx>=0.27",
+]
+
+[project.scripts]
+property-intel = "property_intel.cli:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/property_intel"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"src/property_intel/api/static" = "property_intel/api/static"
+
+[tool.hatch.build.targets.sdist]
+include = ["src/property_intel"]
+
+[tool.hatch.build]
+sources = ["src"]

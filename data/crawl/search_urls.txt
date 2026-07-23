@@ -1,0 +1,10 @@
+# Search/category pages — 1 URL per line (NOT individual listings).
+# Mỗi dòng = 1 quận/khu → discover gom link tin vào urls.txt
+#
+# Test:
+#   python -m property_intel.cli discover --max-links 10
+#   python -m property_intel.cli crawl --source firecrawl
+#   python -m property_intel.cli extract && python -m property_intel.cli index
+
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem

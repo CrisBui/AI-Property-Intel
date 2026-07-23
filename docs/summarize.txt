@@ -1,0 +1,29 @@
+ai-property-intelligence/
+├── .env / .env.example          # config + API keys
+├── .gitignore
+├── pyproject.toml               # deps + entry point
+├── data/
+│   ├── raw/                     # 33 file seed .txt (tin đăng thô)
+│   ├── app.db                   # SQLite runtime (gitignore)
+│   └── chroma/                  # vector index runtime (gitignore)
+└── src/property_intel/
+    ├── config.py                # Settings từ .env
+    ├── llm.py                   # Factory LLM multi-provider
+    ├── cli.py                   # 6 lệnh CLI
+    ├── models/
+    │   ├── listing.py           # Listing, MatchFilters, MatchResult
+    │   └── market.py            # MarketReport, AreaMarketStats
+    ├── db/
+    │   ├── models.py            # SQLAlchemy: raw_listings, listings
+    │   └── session.py           # Engine + session_scope
+    ├── pipeline/
+    │   ├── ingest.py            # Đọc .txt → raw_listings
+    │   ├── extract.py           # LLM → listings structured
+    │   ├── index.py             # SQLite → Chroma embeddings
+    │   ├── match_query.py       # Hybrid SQL + Chroma
+    │   └── market_intel.py      # Thống kê thị trường (chủ trọ)
+    ├── agents/
+    │   └── matching_graph.py    # LangGraph 4 node
+    └── api/
+        ├── app.py               # FastAPI REST + UI
+        └── static/index.html    # Form web đơn giản

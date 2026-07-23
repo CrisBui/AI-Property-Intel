@@ -1,0 +1,43 @@
+# Auto-discovered listing URLs (PhongTot only)
+# Source search pages: search_urls.txt
+
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happyhomes-1-yen-hoa-cau-giay-tn4370
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happyhomes-tran-quoc-vuong-cau-giay-tn4369
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happyhomes-nguyen-khanh-toan-cau-giay-tn2367
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happyhomes-tran-thai-tong-cau-giay-tn2365
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happy-homes-nguyen-khanh-toan-cau-giay-tn1748
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happyhomes-ho-tung-mau-cau-giay-tn1773
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happyhomes-ho-tung-mau-cau-giay-tn555
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happyhomes-2-ho-tung-mau-cau-giay-tn4366
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happy-homes-3-tran-binh-cau-giay-tn4363
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happy-homes-2-tran-binh-cau-giay-tn1754
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happyhomes-4-doan-ke-thien-cau-giay-tn4362
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happyhomes-2-doan-ke-thien-cau-giay-tn2697
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happyhomes-1-yen-hoa-cau-giay-tn4370 "Phòng trọ cho thuê HappyHomes 1 Yên Hòa - Cầu Giấy"
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happyhomes-tran-quoc-vuong-cau-giay-tn4369 "Phòng trọ cho thuê HappyHomes Trần Quốc Vượng - Cầu Giấy"
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happyhomes-nguyen-khanh-toan-cau-giay-tn2367 "Phòng trọ cho thuê HappyHomes Nguyễn Khánh Toàn - Cầu Giấy"
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happyhomes-tran-thai-tong-cau-giay-tn2365 "Phòng trọ cho thuê HappyHomes Trần Thái Tông - Cầu Giấy"
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happy-homes-nguyen-khanh-toan-cau-giay-tn1748 "Phòng trọ cho thuê Happy Homes Nguyễn Khánh Toàn - Cầu Giấy"
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happyhomes-ho-tung-mau-cau-giay-tn1773 "Phòng trọ cho thuê Happyhomes Hồ Tùng Mậu - Cầu Giấy"
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happyhomes-ho-tung-mau-cau-giay-tn555 "Phòng trọ cho thuê HappyHomes Hồ Tùng Mậu - Cầu Giấy"
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happyhomes-2-ho-tung-mau-cau-giay-tn4366 "Phòng trọ cho thuê HappyHomes 2 Hồ Tùng Mậu - Cầu Giấy"
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/happy-homes-1-my-dinh-nam-tu-liem-tn1749
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/happyhomes-thien-hien-nam-tu-liem-tn2358
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/happy-homes-2-my-dinh-nam-tu-liem-tn1752
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/friends-team-dong-me-nam-tu-liem-tn858
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/am-home-me-tri-thuong-nam-tu-liem-tn848
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/friends-team-me-tri-ha-nam-tu-liem-tn1414
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/qm-house-le-quang-dao-nam-tu-liem-tn922
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/qm-housing-le-quang-dao-nam-tu-liem-tn1616
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/qm-housing-apartment-le-quang-dao-nam-tu-liem-tn697
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/salahomes-dinh-thon-nam-tu-liem-tn4024
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/ch-home-me-tri-thuong-nam-tu-liem-tn4389
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/ch-home-phu-my-nam-tu-liem-tn4391
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/happy-homes-1-my-dinh-nam-tu-liem-tn1749 "Phòng trọ cho thuê Happy Homes 1 Mỹ Đình - Nam Từ Liêm"
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/happyhomes-thien-hien-nam-tu-liem-tn2358 "Phòng trọ cho thuê HappyHomes Thiên Hiền - Nam Từ Liêm"
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/happy-homes-2-my-dinh-nam-tu-liem-tn1752 "Phòng trọ cho thuê Happy Homes 2 Mỹ Đình - Nam Từ Liêm"
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/friends-team-dong-me-nam-tu-liem-tn858 "Phòng trọ cho thuê Friends Team Đồng Me - Nam Từ Liêm "
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/am-home-me-tri-thuong-nam-tu-liem-tn848 "Phòng trọ cho thuê AM Home Mễ Trì Thượng - Nam Từ Liêm"
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/friends-team-me-tri-ha-nam-tu-liem-tn1414 "Phòng trọ cho thuê Friends Team Mễ Trì Hạ - Nam Từ Liêm"
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/qm-house-le-quang-dao-nam-tu-liem-tn922 "Phòng trọ cho thuê QM House Lê Quang Đạo - Nam Từ Liêm"
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/qm-housing-le-quang-dao-nam-tu-liem-tn1616 "Phòng trọ cho thuê QM Housing Lê Quang Đạo - Nam Từ Liêm"

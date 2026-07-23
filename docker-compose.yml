@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: property_intel_postgres
+    environment:
+      POSTGRES_USER: property_intel
+      POSTGRES_PASSWORD: property_intel
+      POSTGRES_DB: property_intel
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U property_intel -d property_intel"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+
+volumes:
+  postgres_data:

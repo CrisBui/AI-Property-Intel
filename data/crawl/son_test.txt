@@ -1,0 +1,48 @@
+SQL candidates: 4
+Chroma mode: rerank trong tập SQL candidates
+Top 4 kết quả:
+1. [phongtot_0953e773f6df] Happyhomes Hồ Tùng Mậu - Cầu Giấy — 4,600,000 VND — Cầu Giấy
+   Diện tích: 28 m²
+   Loại phòng: studio
+   Mô tả: Happyhomes Hồ Tùng Mậu nằm tại vị trí trung tâm Hồ Tùng Mậu, phường Phú Diễn, quận Bắc Từ Liêm.Cung cấp các phòng studio đầy đủ tiện nghi với giá thuê từ 4.500.000 - 5.000.000 VNĐ/tháng.
+   Amenities: dieu_hoa, bep, may_giat, nong_lanh
+   SĐT: 0888022821
+   Link: https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happyhomes-ho-tung-mau-cau-giay-tn1773
+   Giá 4,600,000 VND (≤ 5,000,000); Diện tích 28 m²; Tiện ích: bep; Điện 3,800 đ/kWh; 7 tầng; 25 phòng; Quận Cầu Giấy; Landmarks: bach_khoa, dhbk; Chroma score=0.605
+2. [phongtot_cce405badeba] TT House 2 Dịch Vọng - Cầu Giấy — 4,200,000 VND — Cầu Giấy
+   Diện tích: 28 m²
+   Loại phòng: co_bep
+   Mô tả: Chung cư mini TT House 2 Dịch Vọng, Cầu Giấy, giá thuê 4.200.000 VNĐ/tháng. Nội thất đầy đủ, cóđiều hòa, bình nóng lạnh, giường ngủ, tủ quần áo. Khu vực an ninh, yên tĩnh, gần nhiều trường đại học và
+   Amenities: dieu_hoa, nong_lanh, bep
+   SĐT: 0888022821
+   Link: https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/tt-house-2-dich-vong-cau-giay-tn1141
+   Giá 4,200,000 VND (≤ 5,000,000); Diện tích 28 m²; Tiện ích: bep; Điện 4,000 đ/kWh; 5 tầng; 8 phòng; Quận Cầu Giấy; Landmarks: dai_hoc_quoc_gia; Chroma score=0.593
+3. [phongtot_b4cc3ef91d08] HappyHomes Trần Thái Tông - Cầu Giấy — 3,500,000 VND — Cầu Giấy
+   Diện tích: 24 m²
+   Loại phòng: 1_ngu_1_khach, co_bep, view_ban_cong
+   Mô tả: Căn hộ HappyHomes Trần Thái Tông tại Quận Cầu Giấy, Hà Nội, có diện tích từ 25-35m², đầy đủ nộithất, khu bếp riêng, phòng tắm riêng, cửa sổ lớn. Giá thuê hợp lý, hợp đồng linh hoạt từ 6 tháng đến 1 n
+   Amenities: may_giat, bep, dieu_hoa, nong_lanh, ban_cong
+   SĐT: 0888022821
+   Link: https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happyhomes-tran-thai-tong-cau-giay-tn2365
+   Giá 3,500,000 VND (≤ 5,000,000); Diện tích 24 m²; Tiện ích: bep; Điện 4,000 đ/kWh; 7 tầng; 35 phòng; Quận Cầu Giấy; Landmarks: bach_khoa, dhbk, kim_lien, dong_tac, lang_ha; Chroma score=0.591
+4. [phongtot_60281bbef59f] HappyHomes 2 Doãn Kế Thiện - Cầu Giấy — 3,700,000 VND — Cầu Giấy
+   Diện tích: 20 m²
+   Mô tả: Phòng cho thuê tại HappyHomes 2 Doãn Kế Thiện - Cầu Giấy, gần trường đại học, siêu thị, bệnh viện. Tiện ích hiện đại, an ninh đảm bảo, giá thuê hợp lý.
+   Amenities: dieu_hoa, nong_lanh, bep
+   SĐT: 0888022821
+   Link: https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happyhomes-2-doan-ke-thien-cau-giay-tn2697
+   Giá 3,700,000 VND (≤ 5,000,000); Diện tích 20 m²; Tiện ích: bep; Điện 4,000 đ/kWh; 5 tầng; 10 phòng; Quận Cầu Giấy; Landmarks: ho_tung_mau, xuan_thuy, pham_van_dong, my_dinh, cau_giay; Chroma score=0.556
+
+---
+Giải thích:
+Kết quả tìm kiếm cho thuê phòng tại quận Cầu Giấy dưới 5 triệu, điện dưới 4k, diện tích trên 20m2, có bếpvà tủ lạnh cho thấy 4 lựa chọn phù hợp. Các lựa chọn hàng đầu như Happyhomes Hồ Tùng Mậu, TT House 2 DịchVọng, HappyHomes Trần Thái Tông và HappyHomes 2 Doãn Kế Thiện đều nằm trong quận Cầu Giấy, đáp ứng các tiêu chí về giá, diện tích và tiện nghi.
+
+
+1. [phongtot_0953e773f6df] Happyhomes Hồ Tùng Mậu - Cầu Giấy — 4,600,000 VND — Cầu Giấy
+   Diện tích: 28 m²
+   Loại phòng: studio
+   Mô tả: Happyhomes Hồ Tùng Mậu nằm tại vị trí trung tâm Hồ Tùng Mậu, phường Phú Diễn, quận Bắc Từ Liêm. Cung cấp các phòng studio đầy đủ tiện nghi với giá thuê từ 4.500.000 - 5.000.000 VNĐ/tháng.
+   Amenities: dieu_hoa, bep, may_giat, nong_lanh
+   SĐT: 0888022821
+   Link: https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happyhomes-ho-tung-mau-cau-giay-tn1773
+   Giá 4,600,000 VND (≤ 5,000,000); Diện tích 28 m²; Tiện ích: bep; Điện 3,800 đ/kWh; 7 tầng; 25 phòng; Quận Cầu Giấy; Landmarks: bach_khoa, dhbk; Chroma score=0.597

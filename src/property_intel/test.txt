@@ -1,0 +1,52 @@
+source .venv/bin/activate
+docker compose ps  
+SELECT source_id, source_platform, source_url, extracted, extract_status
+FROM raw_listings
+WHERE source_url ILIKE '%phongtot.com%';
+
+tôi 
+Bước dài hạn tiếp theo (chưa làm)
+SQLite → Postgres
+Crawl tin thật (Apify/Firecrawl)
+Port Java/Spring
+Reply nếu bạn muốn làm tiếp mục nào trong 3 mục trên.
+
+
+.venv) SONBC@SONBC-D6-U:~/Documents/ai-property-intelligence$ python -m property_intel.cli analyze
+INFO property_intel.pipeline.market_intel: Market report: total=25 areas=5 filter=None
+BÁO CÁO THỊ TRƯỜNG (từ listings đã extract)
+Tổng listings: 25
+
+9router
+
+## Khu: bach khoa
+   Số tin: 20 (có giá: 20)
+   Giá: min 2,200,000 — avg 3,450,000 — max 5,500,000 VND/tháng
+   Tiện ích phổ biến: may_giat (14, 70.0%), dieu_hoa (13, 65.0%), nong_lanh (12, 60.0%), ban_cong (7, 35.0%), bep (7, 35.0%)
+
+## Khu: bachkhoa
+   Số tin: 1 (có giá: 1)
+   Giá: min 3,300,000 — avg 3,300,000 — max 3,300,000 VND/tháng
+   Tiện ích phổ biến: beptu (1, 100.0%), maygiat (1, 100.0%), dieuhoa (1, 100.0%), wifi (1, 100.0%)
+
+## Khu: cong vien thong nhan
+   Số tin: 1 (có giá: 1)
+   Giá: min 3,500,000 — avg 3,500,000 — max 3,500,000 VND/tháng
+   Tiện ích phổ biến: be (1, 100.0%), dieu_hoa (1, 100.0%)
+
+## Khu: dhbk
+   Số tin: 2 (có giá: 1)
+   Giá: min 3,000,000 — avg 3,000,000 — max 3,000,000 VND/tháng
+   Tiện ích phổ biến: bep (2, 100.0%), dieu_hoa (1, 50.0%), may_giat (1, 50.0%), nong_lanh (1, 50.0%)
+
+## Khu: unknown
+   Số tin: 1 (có giá: 1)
+   Giá: min 3,400,000 — avg 3,400,000 — max 3,400,000 VND/tháng
+   Tiện ích phổ biến: bep (1, 100.0%), dieu_hoa (1, 100.0%), nong_lanh (1, 100.0%)
+
+Lưu ý: số liệu chỉ từ seed data hiện có, không phải thống kê thị trường thật.
+
+
+
+
+python -m property_intel.cli analyze --landmark bach_khoa
