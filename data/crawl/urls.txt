@@ -1,43 +1,117 @@
-# Auto-discovered listing URLs (PhongTot only)
+# Auto-discovered listing URLs (PhongTot + NhaTot)
 # Source search pages: search_urls.txt
 
-https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happyhomes-1-yen-hoa-cau-giay-tn4370
-https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happyhomes-tran-quoc-vuong-cau-giay-tn4369
-https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happyhomes-nguyen-khanh-toan-cau-giay-tn2367
-https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happyhomes-tran-thai-tong-cau-giay-tn2365
-https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happy-homes-nguyen-khanh-toan-cau-giay-tn1748
-https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happyhomes-ho-tung-mau-cau-giay-tn1773
-https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happyhomes-ho-tung-mau-cau-giay-tn555
-https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happyhomes-2-ho-tung-mau-cau-giay-tn4366
-https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happy-homes-3-tran-binh-cau-giay-tn4363
-https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happy-homes-2-tran-binh-cau-giay-tn1754
-https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happyhomes-4-doan-ke-thien-cau-giay-tn4362
-https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happyhomes-2-doan-ke-thien-cau-giay-tn2697
-https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happyhomes-1-yen-hoa-cau-giay-tn4370 "Phòng trọ cho thuê HappyHomes 1 Yên Hòa - Cầu Giấy"
-https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happyhomes-tran-quoc-vuong-cau-giay-tn4369 "Phòng trọ cho thuê HappyHomes Trần Quốc Vượng - Cầu Giấy"
-https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happyhomes-nguyen-khanh-toan-cau-giay-tn2367 "Phòng trọ cho thuê HappyHomes Nguyễn Khánh Toàn - Cầu Giấy"
-https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happyhomes-tran-thai-tong-cau-giay-tn2365 "Phòng trọ cho thuê HappyHomes Trần Thái Tông - Cầu Giấy"
-https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happy-homes-nguyen-khanh-toan-cau-giay-tn1748 "Phòng trọ cho thuê Happy Homes Nguyễn Khánh Toàn - Cầu Giấy"
-https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happyhomes-ho-tung-mau-cau-giay-tn1773 "Phòng trọ cho thuê Happyhomes Hồ Tùng Mậu - Cầu Giấy"
-https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happyhomes-ho-tung-mau-cau-giay-tn555 "Phòng trọ cho thuê HappyHomes Hồ Tùng Mậu - Cầu Giấy"
-https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/happyhomes-2-ho-tung-mau-cau-giay-tn4366 "Phòng trọ cho thuê HappyHomes 2 Hồ Tùng Mậu - Cầu Giấy"
-https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/happy-homes-1-my-dinh-nam-tu-liem-tn1749
-https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/happyhomes-thien-hien-nam-tu-liem-tn2358
-https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/happy-homes-2-my-dinh-nam-tu-liem-tn1752
-https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/friends-team-dong-me-nam-tu-liem-tn858
-https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/am-home-me-tri-thuong-nam-tu-liem-tn848
-https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/friends-team-me-tri-ha-nam-tu-liem-tn1414
-https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/qm-house-le-quang-dao-nam-tu-liem-tn922
-https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/qm-housing-le-quang-dao-nam-tu-liem-tn1616
-https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/qm-housing-apartment-le-quang-dao-nam-tu-liem-tn697
-https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/salahomes-dinh-thon-nam-tu-liem-tn4024
-https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/ch-home-me-tri-thuong-nam-tu-liem-tn4389
-https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/ch-home-phu-my-nam-tu-liem-tn4391
-https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/happy-homes-1-my-dinh-nam-tu-liem-tn1749 "Phòng trọ cho thuê Happy Homes 1 Mỹ Đình - Nam Từ Liêm"
-https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/happyhomes-thien-hien-nam-tu-liem-tn2358 "Phòng trọ cho thuê HappyHomes Thiên Hiền - Nam Từ Liêm"
-https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/happy-homes-2-my-dinh-nam-tu-liem-tn1752 "Phòng trọ cho thuê Happy Homes 2 Mỹ Đình - Nam Từ Liêm"
-https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/friends-team-dong-me-nam-tu-liem-tn858 "Phòng trọ cho thuê Friends Team Đồng Me - Nam Từ Liêm "
-https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/am-home-me-tri-thuong-nam-tu-liem-tn848 "Phòng trọ cho thuê AM Home Mễ Trì Thượng - Nam Từ Liêm"
-https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/friends-team-me-tri-ha-nam-tu-liem-tn1414 "Phòng trọ cho thuê Friends Team Mễ Trì Hạ - Nam Từ Liêm"
-https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/qm-house-le-quang-dao-nam-tu-liem-tn922 "Phòng trọ cho thuê QM House Lê Quang Đạo - Nam Từ Liêm"
-https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/qm-housing-le-quang-dao-nam-tu-liem-tn1616 "Phòng trọ cho thuê QM Housing Lê Quang Đạo - Nam Từ Liêm"
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/ct-house-tran-quoc-vuong-cau-giay-tn4338
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/dreamhouse-tran-thai-tong-cau-giay-tn1032
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/dreamhouse-hoang-quoc-viet-cau-giay-tn1029
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/dreamhouse-yen-hoa-cau-giay-tn1028
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/qhome-tran-duy-hung-cau-giay-tn1462
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/avhome-hoang-quoc-viet-cau-giay-tn4274
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/4ps-housing-nguyen-khanh-toan-cau-giay-tn1284
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/renhouse-mai-dich-cau-giay-tn923
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/renhouse-tran-thai-tong-cau-giay-tn2074
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/renhouse-3-tran-thai-tong-cau-giay-tn886
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/renhouse-2-tran-thai-tong-cau-giay-tn885
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/renhouse-nguyen-khang-cau-giay-tn913
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/ct-house-tran-quoc-vuong-cau-giay-tn4338 "Phòng trọ cho thuê CT House Trần Quốc Vượng - Cầu Giấy"
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/dreamhouse-tran-thai-tong-cau-giay-tn1032 "Phòng trọ cho thuê DreamHouse Trần Thái Tông - Cầu Giấy"
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/dreamhouse-hoang-quoc-viet-cau-giay-tn1029 "Phòng trọ cho thuê DreamHouse Hoàng Quốc Việt - Cầu Giấy"
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/dreamhouse-yen-hoa-cau-giay-tn1028 "Phòng trọ cho thuê DreamHouse Yên Hòa - Cầu Giấy"
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/qhome-tran-duy-hung-cau-giay-tn1462 "Phòng trọ cho thuê QHOME Trần Duy Hưng - Cầu Giấy"
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/avhome-hoang-quoc-viet-cau-giay-tn4274 "Phòng trọ cho thuê AVHome Hoàng Quốc Việt - Cầu Giấy"
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/4ps-housing-nguyen-khanh-toan-cau-giay-tn1284 "Phòng trọ cho thuê 4PS Housing Nguyễn Khánh Toàn - Cầu Giấy"
+https://phongtot.com/cho-thue-phong-tro-hn/quan-cau-giay/renhouse-mai-dich-cau-giay-tn923 "Phòng trọ cho thuê RenHouse Mai Dịch - Cầu Giấy"
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/vnfi-house-1-me-tri-thuong-nam-tu-liem-tn4282
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/vnfi-house-1-my-dinh-nam-tu-liem-tn1382
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/vnfi-house-me-tri-thuong-nam-tu-liem-tn4279
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/vnfi-house-tay-mo-nam-tu-liem-tn4280
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/vnfi-house-2-my-dinh-nam-tu-liem-tn1380
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/ct-house-dai-linh-nam-tu-liem-tn1297
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/ct-housing-phu-my-nam-tu-liem-tn705
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/dreamhouse-1-my-dinh-nam-tu-liem-tn1034
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/bp-home-me-tri-ha-nam-tu-liem-tn950
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/bp-home-phu-my-nam-tu-liem-tn954
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/bp-home-my-dinh-nam-tu-liem-tn948
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/vihome-plus-le-quang-dao-nam-tu-liem-tn1392
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/vnfi-house-1-me-tri-thuong-nam-tu-liem-tn4282 "Phòng trọ cho thuê VNFI House 1 Mễ Trì Thượng - Nam Từ Liêm"
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/vnfi-house-1-my-dinh-nam-tu-liem-tn1382 "Phòng trọ cho thuê VNFI House 1 Mỹ Đình - Nam Từ Liêm"
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/vnfi-house-me-tri-thuong-nam-tu-liem-tn4279 "Phòng trọ cho thuê VNFI House Mễ Trì Thượng  - Nam Từ Liêm"
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/vnfi-house-tay-mo-nam-tu-liem-tn4280 "Phòng trọ cho thuê VNFI House Tây Mỗ - Nam Từ Liêm"
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/vnfi-house-2-my-dinh-nam-tu-liem-tn1380 "Phòng trọ cho thuê VNFI House 2 Mỹ Đình - Nam Từ Liêm"
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/ct-house-dai-linh-nam-tu-liem-tn1297 "Phòng trọ cho thuê CT House Đại Linh - Nam Từ Liêm"
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/ct-housing-phu-my-nam-tu-liem-tn705 "Phòng trọ cho thuê CT Housing Phú Mỹ - Nam Từ Liêm"
+https://phongtot.com/cho-thue-phong-tro-hn/quan-nam-tu-liem/dreamhouse-1-my-dinh-nam-tu-liem-tn1034 "Phòng trọ cho thuê DreamHouse 1 Mỹ Đình - Nam Từ Liêm"
+https://www.nhatot.com/thue-phong-tro-quan-hoang-mai-ha-noi/133798043.htm
+https://www.nhatot.com/thue-phong-tro-quan-ba-dinh-ha-noi/132446216.htm
+https://www.nhatot.com/thue-phong-tro-quan-dong-da-ha-noi/129370400.htm
+https://www.nhatot.com/thue-phong-tro-quan-cau-giay-ha-noi/133355891.htm
+https://www.nhatot.com/thue-phong-tro-quan-dong-da-ha-noi/133653727.htm
+https://www.nhatot.com/thue-phong-tro-quan-hoang-mai-ha-noi/131136908.htm
+https://www.nhatot.com/thue-phong-tro-quan-hoang-mai-ha-noi/133783238.htm
+https://www.nhatot.com/thue-phong-tro-quan-hoang-mai-ha-noi/133773848.htm
+https://www.nhatot.com/thue-phong-tro-quan-bac-tu-liem-ha-noi/133760372.htm
+https://www.nhatot.com/thue-phong-tro-quan-nam-tu-liem-ha-noi/133804942.htm
+https://www.nhatot.com/thue-phong-tro-quan-hoang-mai-ha-noi/133789502.htm
+https://www.nhatot.com/thue-phong-tro-quan-long-bien-ha-noi/133764101.htm
+https://www.nhatot.com/thue-phong-tro-quan-ba-dinh-ha-noi/132733602.htm
+https://www.nhatot.com/thue-phong-tro-quan-nam-tu-liem-ha-noi/133780001.htm
+https://www.nhatot.com/thue-phong-tro-quan-tay-ho-ha-noi/133804011.htm
+https://www.nhatot.com/thue-phong-tro-quan-ba-dinh-ha-noi/123516490.htm
+https://www.nhatot.com/thue-phong-tro-quan-ha-dong-ha-noi/133803935.htm
+https://www.nhatot.com/thue-phong-tro-quan-ha-dong-ha-noi/133796017.htm
+https://www.nhatot.com/thue-phong-tro-quan-ba-dinh-ha-noi/133436734.htm
+https://www.nhatot.com/thue-phong-tro-quan-cau-giay-ha-noi/133772375.htm
+https://www.nhatot.com/thue-phong-tro-quan-cau-giay-ha-noi/133791569.htm
+https://www.nhatot.com/thue-phong-tro-quan-cau-giay-ha-noi/133431083.htm
+https://www.nhatot.com/thue-phong-tro-quan-cau-giay-ha-noi/133686607.htm
+https://www.nhatot.com/thue-phong-tro-quan-cau-giay-ha-noi/133799487.htm
+https://www.nhatot.com/thue-phong-tro-quan-cau-giay-ha-noi/133796581.htm
+https://www.nhatot.com/thue-phong-tro-quan-cau-giay-ha-noi/133796572.htm
+https://www.nhatot.com/thue-phong-tro-quan-cau-giay-ha-noi/133796571.htm
+https://www.nhatot.com/thue-phong-tro-quan-cau-giay-ha-noi/133795877.htm
+https://www.nhatot.com/thue-phong-tro-quan-cau-giay-ha-noi/133786632.htm
+https://www.nhatot.com/thue-phong-tro-quan-cau-giay-ha-noi/132781067.htm
+https://www.nhatot.com/thue-phong-tro-quan-cau-giay-ha-noi/133777866.htm
+https://www.nhatot.com/thue-phong-tro-quan-cau-giay-ha-noi/132872018.htm
+https://www.nhatot.com/thue-phong-tro-quan-cau-giay-ha-noi/133774632.htm
+https://www.nhatot.com/thue-phong-tro-quan-cau-giay-ha-noi/132842530.htm
+https://www.nhatot.com/thue-phong-tro-quan-cau-giay-ha-noi/133494472.htm
+https://www.nhatot.com/thue-phong-tro-quan-cau-giay-ha-noi/133621079.htm
+https://www.nhatot.com/thue-phong-tro-quan-cau-giay-ha-noi/133769662.htm
+https://www.nhatot.com/thue-phong-tro-quan-cau-giay-ha-noi/133694489.htm
+https://www.nhatot.com/thue-phong-tro-quan-dong-da-ha-noi/133793409.htm
+https://www.nhatot.com/thue-phong-tro-quan-dong-da-ha-noi/132277335.htm
+https://www.nhatot.com/thue-phong-tro-quan-dong-da-ha-noi/130715427.htm
+https://www.nhatot.com/thue-phong-tro-quan-dong-da-ha-noi/132568201.htm
+https://www.nhatot.com/thue-phong-tro-quan-dong-da-ha-noi/133511060.htm
+https://www.nhatot.com/thue-phong-tro-quan-dong-da-ha-noi/133019354.htm
+https://www.nhatot.com/thue-phong-tro-quan-dong-da-ha-noi/133773532.htm
+https://www.nhatot.com/thue-phong-tro-quan-dong-da-ha-noi/133775724.htm
+https://www.nhatot.com/thue-phong-tro-quan-dong-da-ha-noi/133797390.htm
+https://www.nhatot.com/thue-phong-tro-quan-dong-da-ha-noi/132009725.htm
+https://www.nhatot.com/thue-phong-tro-quan-dong-da-ha-noi/133796536.htm
+https://www.nhatot.com/thue-phong-tro-quan-dong-da-ha-noi/133796535.htm
+https://www.nhatot.com/thue-phong-tro-quan-dong-da-ha-noi/133796533.htm
+https://www.nhatot.com/thue-phong-tro-quan-dong-da-ha-noi/133796531.htm
+https://www.nhatot.com/thue-phong-tro-quan-dong-da-ha-noi/130401437.htm
+https://www.nhatot.com/thue-phong-tro-quan-dong-da-ha-noi/133791263.htm
+https://www.nhatot.com/thue-phong-tro-quan-dong-da-ha-noi/133103538.htm
+https://www.nhatot.com/thue-phong-tro-quan-dong-da-ha-noi/133789332.htm
+https://www.nhatot.com/thue-phong-tro-quan-nam-tu-liem-ha-noi/133762045.htm
+https://www.nhatot.com/thue-phong-tro-quan-nam-tu-liem-ha-noi/133800944.htm
+https://www.nhatot.com/thue-phong-tro-quan-nam-tu-liem-ha-noi/133270822.htm
+https://www.nhatot.com/thue-phong-tro-quan-nam-tu-liem-ha-noi/133754939.htm
+https://www.nhatot.com/thue-phong-tro-quan-nam-tu-liem-ha-noi/133796808.htm
+https://www.nhatot.com/thue-phong-tro-quan-nam-tu-liem-ha-noi/133796580.htm
+https://www.nhatot.com/thue-phong-tro-quan-nam-tu-liem-ha-noi/133796575.htm
+https://www.nhatot.com/thue-phong-tro-quan-nam-tu-liem-ha-noi/133796573.htm
+https://www.nhatot.com/thue-phong-tro-quan-nam-tu-liem-ha-noi/133714909.htm
+https://www.nhatot.com/thue-phong-tro-quan-nam-tu-liem-ha-noi/132886066.htm
+https://www.nhatot.com/thue-phong-tro-quan-nam-tu-liem-ha-noi/133718757.htm
+https://www.nhatot.com/thue-phong-tro-quan-nam-tu-liem-ha-noi/133754885.htm
+https://www.nhatot.com/thue-phong-tro-quan-nam-tu-liem-ha-noi/133791337.htm
+https://www.nhatot.com/thue-phong-tro-quan-nam-tu-liem-ha-noi/133712589.htm
+https://www.nhatot.com/thue-phong-tro-quan-nam-tu-liem-ha-noi/133776678.htm
+https://www.nhatot.com/thue-phong-tro-quan-nam-tu-liem-ha-noi/133776574.htm
+https://www.nhatot.com/thue-phong-tro-quan-nam-tu-liem-ha-noi/133772540.htm
+https://www.nhatot.com/thue-phong-tro-quan-nam-tu-liem-ha-noi/131522655.htm

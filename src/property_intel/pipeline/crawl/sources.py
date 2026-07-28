@@ -117,12 +117,13 @@ class FirecrawlSource(CrawlSource):
 
     def _scrape_payload(self, url: str) -> dict:
         site = platform_from_url(url)
-        if site == "phongtot":
+        if site in {"phongtot", "nhatot"}:
             return {
                 "url": url,
                 "formats": ["markdown", "links"],
                 "onlyMainContent": True,
-                "waitFor": 8000,
+                "waitFor": 10000 if site == "nhatot" else 8000,
+                "timeout": 90000,
             }
         return {
             "url": url,

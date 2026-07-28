@@ -272,6 +272,20 @@ python -m property_intel.cli extract --platform phongtot
 python -m property_intel.cli index
 ```
 
+### C2. Crawl NhaTot (Hà Nội)
+
+```bash
+# Discover + crawl (search_urls.txt đã có trang NhaTot + PhongTot)
+python -m property_intel.cli crawl --source firecrawl --discover --max-links 20
+
+# Extract chỉ NhaTot (parser + LLM)
+python -m property_intel.cli extract --platform nhatot --rate-limit 8
+
+python -m property_intel.cli index
+```
+
+NhaTot listing URL dạng `.../thue-phong-tro-quan-<quận>-ha-noi/<id>.htm`. Dedup admin-review là phase sau — hiện không auto-merge trùng.
+
 ### D. Crawl lại PhongTot (body sai)
 
 ```bash

@@ -112,6 +112,17 @@ def district_from_phongtot_url(url: str | None) -> str | None:
     return HANOI_DISTRICT_SLUGS.get(slug)
 
 
+def district_from_nhatot_url(url: str | None) -> str | None:
+    if not url:
+        return None
+    path = urlparse(url).path.lower()
+    match = re.search(r"/thue-phong-tro-quan-([a-z0-9-]+)-ha-noi/", path)
+    if not match:
+        return None
+    slug = match.group(1)
+    return HANOI_DISTRICT_SLUGS.get(slug)
+
+
 def district_from_address(address: str | None) -> str | None:
     if not address:
         return None

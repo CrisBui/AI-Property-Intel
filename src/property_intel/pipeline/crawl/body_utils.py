@@ -23,6 +23,41 @@ _PHONGTOT_CATEGORY_URL_RE = re.compile(
     re.IGNORECASE,
 )
 
+_NHATOT_NAV_LINE_RE = re.compile(
+    r"^(\s*[-*\d.]+\s*)?(?:nhà tốt|thuê phòng trọ|chia sẻ qua|báo cáo tin đăng|"
+    r"cần trợ giúp\?|lưu$|tin tương tự|tin liên quan|đăng nhanh)\b",
+    re.IGNORECASE,
+)
+
+_NHATOT_NOISE_LINE_RE = re.compile(
+    r"^(?:!\[|!\[\[|1\s*/\s*\d+|static\.chotot\.com|cdn\.chotot\.com/videodelivery)",
+    re.IGNORECASE,
+)
+
+
+def _strip_nhatot_nav(body: str) -> str:
+    """Drop breadcrumbs, gallery chrome, and similar-listing blocks on NhaTot pages."""
+    kept: list[str] = []
+    stop = False
+    for line in body.splitlines():
+        stripped = line.strip()
+        if not stripped:
+            if kept and kept[-1] != "" and not stop:
+                kept.append("")
+            continue
+        if re.search(r"^tin tương tự|^tin liên quan|^báo tin không hợp lệ", stripped, re.I):
+            stop = True
+        if stop:
+            continue
+        if _NHATOT_NAV_LINE_RE.match(stripped):
+            continue
+        if _NHATOT_NOISE_LINE_RE.match(stripped):
+            continue
+        if re.match(r"^\d+\.\s*\[", stripped):
+            continue
+        kept.append(stripped)
+    return "\n".join(kept).strip()
+
 
 def _strip_phongtot_nav(body: str) -> str:
     """Drop sidebar/category links common on PhongTot detail pages."""
@@ -50,6 +85,8 @@ def clean_crawl_body(body: str, source_platform: str | None = None) -> str:
 
     if source_platform == "phongtot":
         text = _strip_phongtot_nav(text)
+    elif source_platform == "nhatot":
+        text = _strip_nhatot_nav(text)
 
     kept: list[str] = []
     seen_lines: set[str] = set()

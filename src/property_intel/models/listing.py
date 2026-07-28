@@ -49,6 +49,7 @@ class MatchFilters(BaseModel):
     max_floor_count: int | None = None
     min_room_count: int | None = None
     district: str | None = None
+    districts: list[str] = Field(default_factory=list)
     landmark: str | None = None
     soft_prefs: str | None = None
 

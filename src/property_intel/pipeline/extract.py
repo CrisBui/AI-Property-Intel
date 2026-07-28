@@ -15,6 +15,7 @@ from property_intel.llm import (
 )
 from property_intel.models.listing import Listing
 from property_intel.pipeline.crawl.body_utils import prepare_body_for_llm
+from property_intel.pipeline.nhatot_parser import extract_nhatot_main_content, parse_nhatot_body
 from property_intel.pipeline.phongtot_parser import extract_phongtot_main_content, parse_phongtot_body
 from property_intel.pipeline.vietnamese_utils import normalize_district, normalize_amenities
 
@@ -241,6 +242,28 @@ def _merge_phongtot_fields(result: ListingExtraction, parsed, source_url: str | 
     return ListingExtraction(**data)
 
 
+def _merge_nhatot_fields(result: ListingExtraction, parsed, source_url: str | None) -> ListingExtraction:
+    """Prefer deterministic NhaTot parser over LLM for text-heavy fields."""
+    data = result.model_dump()
+    if parsed.title:
+        data["title"] = parsed.title
+    if parsed.price_vnd_min is not None:
+        data["price_vnd"] = parsed.price_vnd_min
+    if parsed.address_text:
+        data["address_text"] = parsed.address_text
+    if parsed.district:
+        data["district"] = parsed.district
+    elif data.get("district"):
+        data["district"] = normalize_district(data["district"])
+    if parsed.area_min_m2 is not None and data.get("area_m2") is None:
+        data["area_m2"] = parsed.area_min_m2
+    if data.get("district"):
+        data["district"] = normalize_district(data["district"])
+    if data.get("title"):
+        data["title"] = normalize_unicode_text(data["title"])
+    return ListingExtraction(**data)
+
+
 def normalize_unicode_text(text: str) -> str:
     from property_intel.pipeline.vietnamese_utils import normalize_unicode
 
@@ -275,20 +298,25 @@ def _build_listing_from_extract(
     }
 
     if parsed is not None:
+        common_amenities = list(getattr(parsed, "common_amenities", []) or [])
+        furnishing = getattr(parsed, "furnishing", None)
+        if furnishing and furnishing not in common_amenities:
+            common_amenities.append(furnishing)
         listing_kwargs.update(
             {
-                "common_amenities": parsed.common_amenities,
+                "common_amenities": common_amenities,
                 "service_fees": parsed.service_fees,
                 "building": {
-                    "floor_count": parsed.floor_count,
-                    "room_count": parsed.room_count,
-                    "renovation_year": parsed.renovation_year,
+                    "floor_count": getattr(parsed, "floor_count", None),
+                    "room_count": getattr(parsed, "room_count", None),
+                    "renovation_year": getattr(parsed, "renovation_year", None),
+                    "deposit_vnd": getattr(parsed, "deposit_vnd", None),
                 },
                 "contact_phone": parsed.contact_phone,
                 "description_long": parsed.description_long,
                 "area_min_m2": parsed.area_min_m2,
                 "area_max_m2": parsed.area_max_m2,
-                "price_note": parsed.price_note,
+                "price_note": getattr(parsed, "price_note", None),
             }
         )
 
@@ -316,15 +344,23 @@ def _extract_one(
                 time.sleep(rate_limit_seconds)
 
             is_phongtot = raw.source_platform == "phongtot"
+            is_nhatot = raw.source_platform == "nhatot"
             raw_body = raw.body
             if is_phongtot:
                 raw_body = extract_phongtot_main_content(raw.body)
+            elif is_nhatot:
+                raw_body = extract_nhatot_main_content(raw.body)
             body_for_llm = prepare_body_for_llm(
                 raw_body,
                 max_chars=settings.extract_max_body_chars,
                 source_platform=raw.source_platform,
             )
-            parsed = parse_phongtot_body(raw.body, raw.source_url) if is_phongtot else None
+            if is_phongtot:
+                parsed = parse_phongtot_body(raw.body, raw.source_url)
+            elif is_nhatot:
+                parsed = parse_nhatot_body(raw.body, raw.source_url)
+            else:
+                parsed = None
             prompt = (
                 f"source_id: {raw.source_id}\n\n"
                 f"Raw post:\n{body_for_llm}\n\n"
@@ -344,7 +380,10 @@ def _extract_one(
                 settings,
             )
             if parsed is not None:
-                result = _merge_phongtot_fields(result, parsed, raw.source_url)
+                if is_phongtot:
+                    result = _merge_phongtot_fields(result, parsed, raw.source_url)
+                elif is_nhatot:
+                    result = _merge_nhatot_fields(result, parsed, raw.source_url)
             else:
                 result = ListingExtraction(
                     **{

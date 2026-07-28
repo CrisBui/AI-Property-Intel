@@ -40,6 +40,24 @@ def is_phongtot_url(url: str) -> bool:
     return platform_from_url(url) == "phongtot"
 
 
+def is_nhatot_url(url: str) -> bool:
+    return platform_from_url(url) == "nhatot"
+
+
+def is_allowed_crawl_url(url: str) -> bool:
+    return platform_from_url(url) in {"phongtot", "nhatot"}
+
+
+def platform_from_source_id(source_id: str) -> str:
+    if source_id.startswith("nhatot_"):
+        return "nhatot"
+    if source_id.startswith("phongtot_"):
+        return "phongtot"
+    if source_id.startswith("seed_"):
+        return "seed_file"
+    return "web"
+
+
 def source_id_from_url(url: str, platform: str | None = None) -> str:
     site = platform or platform_from_url(url)
     digest = hashlib.sha256(url.encode("utf-8")).hexdigest()[:12]

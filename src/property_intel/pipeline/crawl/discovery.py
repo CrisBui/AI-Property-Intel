@@ -13,7 +13,7 @@ from property_intel.pipeline.crawl.sources import FirecrawlSource
 
 logger = logging.getLogger(__name__)
 
-# NhaTot / Chợ Tốt BĐS: .../123456789.htm
+# NhaTot / Chợ Tốt: .../133355891.htm
 NHATOT_LISTING_URL_RE = re.compile(
     r"https?://(?:www\.)?(?:nhatot|chotot)\.com/(?!.*/q-)[^\s)\]\"'<>]+?\d{6,}\.htm",
     re.IGNORECASE,
@@ -37,6 +37,8 @@ def _normalize_nhatot_url(url: str) -> str:
     path = parsed.path.rstrip("/")
     if not path.endswith(".htm") or "/q-" in path.lower():
         return ""
+    if not re.search(r"/\d{6,}\.htm$", path, re.I):
+        return ""
     return f"https://{parsed.netloc}{path}"
 
 
@@ -52,6 +54,9 @@ def _normalize_phongtot_url(url: str) -> str:
 
 
 def normalize_listing_url(url: str) -> str:
+    normalized = _normalize_nhatot_url(url)
+    if normalized:
+        return normalized
     return _normalize_phongtot_url(url)
 
 
@@ -63,10 +68,11 @@ def extract_listing_urls(content: str, page_links: list[str], base_url: str) -> 
         if normalized:
             candidates.append(normalized)
 
-    for match in PHONGTOT_LISTING_URL_RE.finditer(content):
-        normalized = normalize_listing_url(match.group(0))
-        if normalized:
-            candidates.append(normalized)
+    for pattern in (NHATOT_LISTING_URL_RE, PHONGTOT_LISTING_URL_RE):
+        for match in pattern.finditer(content):
+            normalized = normalize_listing_url(match.group(0))
+            if normalized:
+                candidates.append(normalized)
 
     for match in MARKDOWN_LINK_RE.finditer(content):
         normalized = normalize_listing_url(match.group(1))
@@ -132,7 +138,7 @@ def run_discover(
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     lines = [
-        "# Auto-discovered listing URLs (PhongTot only)",
+        "# Auto-discovered listing URLs (PhongTot + NhaTot)",
         f"# Source search pages: {input_path.name}",
         "",
     ]

@@ -105,6 +105,38 @@ def _row_matches_district(row: ListingRow, district: str | None) -> bool:
     return _fold_key(row_district) == _fold_key(target)
 
 
+def _row_matches_districts(row: ListingRow, filters: MatchFilters) -> bool:
+    if filters.districts:
+        row_district = normalize_district(row.district)
+        if not row_district:
+            return False
+        for raw in filters.districts:
+            target = normalize_district(raw)
+            if target and _fold_key(row_district) == _fold_key(target):
+                return True
+        return False
+    return _row_matches_district(row, filters.district)
+
+
+def _row_matches_text_query(row: ListingRow, q: str | None) -> bool:
+    if not q or not q.strip():
+        return True
+    needle = _fold_key(q.strip())
+    landmarks = as_json_list(row.near_landmarks_json)
+    blob = _fold_key(
+        " ".join(
+            [
+                row.title or "",
+                row.address_text or "",
+                row.short_description or "",
+                row.district or "",
+                " ".join(landmarks),
+            ]
+        )
+    )
+    return needle in blob
+
+
 def _normalize_query_key(query: str) -> str:
     return " ".join(query.strip().split())
 
@@ -274,7 +306,7 @@ def _row_matches_landmark(row: ListingRow, landmark: str | None) -> bool:
     return any(alias in text_blob for alias in candidates)
 
 
-def sql_filter_listings(filters: MatchFilters) -> list[ListingRow]:
+def sql_filter_listings(filters: MatchFilters, q: str | None = None) -> list[ListingRow]:
     with session_scope() as session:
         rows = session.scalars(select(ListingRow)).all()
         candidates: list[ListingRow] = []
@@ -297,9 +329,11 @@ def sql_filter_listings(filters: MatchFilters) -> list[ListingRow]:
                 continue
             if not _row_matches_building(row, filters):
                 continue
-            if not _row_matches_district(row, filters.district):
+            if not _row_matches_districts(row, filters):
                 continue
             if not _row_matches_landmark(row, filters.landmark):
+                continue
+            if not _row_matches_text_query(row, q):
                 continue
             candidates.append(row)
         session.expunge_all()

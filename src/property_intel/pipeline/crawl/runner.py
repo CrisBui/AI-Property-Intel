@@ -12,7 +12,7 @@ from property_intel.config import get_settings
 from property_intel.db.models import RawListingRow
 from property_intel.db.session import session_scope
 from property_intel.pipeline.crawl.discovery import run_discover
-from property_intel.pipeline.crawl.base import CrawlItem, CrawlSource, is_phongtot_url, load_urls_file
+from property_intel.pipeline.crawl.base import CrawlItem, CrawlSource, is_allowed_crawl_url, load_urls_file
 from property_intel.pipeline.crawl.sources import FirecrawlSource, UrlFetchSource
 
 logger = logging.getLogger(__name__)
@@ -109,8 +109,8 @@ def run_crawl(
     failed = 0
 
     for index, url in enumerate(urls):
-        if not is_phongtot_url(url):
-            logger.warning("Skipping non-PhongTot URL: %s", url)
+        if not is_allowed_crawl_url(url):
+            logger.warning("Skipping unsupported crawl URL: %s", url)
             failed += 1
             continue
 

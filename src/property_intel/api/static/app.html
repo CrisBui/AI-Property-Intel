@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tìm phòng trọ — AI Property Intelligence</title>
+  <link rel="stylesheet" href="/static/app.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="logo">AI Property Intelligence</div>
+    <p class="header-tagline">Tìm phòng · Hỏi AI so sánh ngay trên kết quả</p>
+  </header>
+
+  <div class="layout" id="searchPanel">
+    <aside class="panel sidebar">
+      <h2>Bộ lọc</h2>
+
+      <div class="field">
+        <label for="qInput">Tìm khu vực, trường, tòa nhà</label>
+        <input id="qInput" type="text" placeholder="VD: ĐHBK, Mỹ Đình, Hồ Tùng Mậu..." />
+      </div>
+
+      <div class="field">
+        <label>Khu vực (quận)</label>
+        <div class="chips" id="districtChips"></div>
+      </div>
+
+      <div class="field">
+        <label>Giá phòng (đ/tháng)</label>
+        <div class="range-row">
+          <input id="priceMin" type="number" min="0" step="100000" value="0" placeholder="Từ" />
+          <input id="priceMax" type="number" min="0" step="100000" placeholder="Đến" />
+        </div>
+        <div class="preset-list" id="pricePresetList"></div>
+      </div>
+
+      <div class="field">
+        <label>Diện tích (m²)</label>
+        <div class="range-row">
+          <input id="areaMin" type="number" min="0" step="1" placeholder="Từ" />
+          <input id="areaMax" type="number" min="0" step="1" placeholder="Đến" />
+        </div>
+        <div class="preset-list" id="areaPresetList"></div>
+      </div>
+
+      <div class="field">
+        <label>Loại phòng</label>
+        <div class="chips" id="layoutChips"></div>
+      </div>
+
+      <div class="field">
+        <label>Tiện ích phòng</label>
+        <div class="chips" id="amenityChips"></div>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn btn-primary" id="searchBtn">Tìm kiếm</button>
+        <button type="button" class="btn btn-ghost" id="resetBtn">Đặt lại</button>
+      </div>
+    </aside>
+
+    <main class="panel">
+      <div class="results-head">
+        <div>
+          <h2>Kết quả</h2>
+          <div class="results-meta" id="resultsMeta">Đang tải...</div>
+        </div>
+        <div class="sort-row">
+          <label for="sortSelect">Sắp xếp</label>
+          <select id="sortSelect" aria-label="Sắp xếp kết quả">
+            <option value="price_asc">Giá thấp → cao</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="results"><div class="loading">Đang tải...</div></div>
+      <div class="pagination" id="pagination"></div>
+    </main>
+  </div>
+
+  <div class="chat-widget hidden" id="chatWidget" role="dialog" aria-label="Trợ lý AI" aria-hidden="true">
+    <div class="chat-widget-header">
+      <div>
+        <strong>Trợ lý AI</strong>
+        <div class="chat-widget-sub" id="chatContextBar">Hỏi về kết quả tìm kiếm hiện tại</div>
+      </div>
+      <div class="chat-widget-actions">
+        <button type="button" class="chat-icon-btn" id="chatExpandBtn" title="Phóng to / Thu nhỏ" aria-pressed="false">⛶</button>
+        <button type="button" class="btn btn-ghost btn-sm" id="chatClearBtn" title="Xóa hội thoại">Xóa</button>
+        <button type="button" class="chat-widget-close" id="chatWidgetClose" aria-label="Đóng">×</button>
+      </div>
+    </div>
+    <div class="chat-quick-actions" id="chatQuickActions"></div>
+    <div class="chat-messages" id="chatMessages"></div>
+    <div class="chat-input-row">
+      <textarea id="chatInput" rows="2" placeholder="VD: So sánh 3 phòng này, căn nào phù hợp sinh viên?"></textarea>
+      <button type="button" class="btn btn-primary" id="chatSendBtn">Gửi</button>
+    </div>
+  </div>
+
+  <div class="drawer-backdrop" id="drawerBackdrop" aria-hidden="true"></div>
+  <aside class="drawer" id="detailDrawer" aria-hidden="true" role="dialog" aria-labelledby="drawerTitle">
+    <div class="drawer-header">
+      <h2 id="drawerTitle">Chi tiết phòng</h2>
+      <button type="button" class="drawer-close" id="drawerClose" aria-label="Đóng">×</button>
+    </div>
+    <div class="drawer-body" id="drawerBody">
+      <div class="loading">Đang tải...</div>
+    </div>
+  </aside>
+
+  <!-- FAB rendered last + highest z-index so it stays clickable -->
+  <div class="chat-fab-wrap" id="chatFabWrap">
+    <button type="button" class="chat-fab" id="chatFabBtn" aria-label="Mở trợ lý AI" aria-expanded="false">
+      <svg class="chat-fab-icon" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">
+        <path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
+      </svg>
+      <span class="chat-fab-badge hidden" id="chatFabBadge">0</span>
+    </button>
+  </div>
+
+  <script src="/static/search.js"></script>
+  <script src="/static/chat.js"></script>
+</body>
+</html>
