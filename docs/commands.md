@@ -7,9 +7,11 @@ Chạy từ thư mục gốc dự án sau khi kích hoạt virtualenv:
 cd ~/Documents/ai-property-intelligence
 source .venv/bin/activate
 ```
-
+// 9router --skip-update --no-browser --host 127.0.0.1
 Cú pháp chung cho CLI:
 
+python -m property_intel.cli serve
+python -m property_intel.cli serve --host 0.0.0.0 --port 8000
 ```bash
 python -m property_intel.cli <lệnh> [tùy-chọn]
 # hoặc (sau pip install -e .)
@@ -110,7 +112,8 @@ python -m property_intel.cli crawl --source url-fetch -f data/crawl/urls.txt
 |---|---|
 | **Input** | `data/crawl/urls.txt` |
 | **Output** | Bảng `raw_listings` (`source_platform = phongtot`, `source_url`, `body`) |
-| **Lưu ý** | Chỉ crawl URL **phongtot.com**; URL khác bị bỏ qua |
+| **Lưu ý** | Chỉ crawl URL **phongtot.com** / **nhatot.com**; URL khác bị bỏ qua |
+| **Ảnh** | Firecrawl lấy thêm `html` + `links` để gắn URL ảnh vào `body`. **Cần crawl lại** (không chỉ extract) nếu DB cũ chưa có ảnh |
 | **Cần API key** | `firecrawl` cần `FIRECRAWL_API_KEY` |
 
 ---
@@ -134,6 +137,39 @@ python -m property_intel.cli extract --platform phongtot --rate-limit 10
 | **Output** | Bảng `listings` (title, price_vnd, district, amenities, …) |
 | **Cần LLM?** | Có — `LLM_PROVIDER` + API key tương ứng |
 | **`success=0`** | Không có tin pending — thường nghĩa là đã extract xong |
+
+**Sau khi crawl lại để có ảnh:**
+
+```bash
+python -m property_intel.cli extract --platform nhatot --force
+python -m property_intel.cli extract --platform phongtot --force
+python -m property_intel.cli index
+```
+
+---
+
+### Freshness (P5) — Ẩn tin cũ / hết hạn
+
+Search UI và chat chỉ hiển thị tin **còn fresh** theo `last_seen_at` (crawl gần nhất) hoặc `posted_at` (NhaTot: *Cập nhật X giờ trước*).
+
+| Biến `.env` | Mặc định | Tác dụng |
+|-------------|----------|----------|
+| `SEARCH_MAX_AGE_DAYS` | `7` | Ẩn tin không thấy lại / quá cũ hơn N ngày. `0` = tắt lọc |
+
+**Luồng giữ tin mới:**
+
+```bash
+# 1. Crawl lại để cập nhật last_seen_at (+ ảnh nếu body cũ thiếu)
+python -m property_intel.cli crawl --source firecrawl --rate-limit 3
+
+# 2. Extract lại để cập nhật posted_at + images_json
+python -m property_intel.cli extract --force
+
+# 3. Re-index
+python -m property_intel.cli index
+```
+
+Tin không xuất hiện trong crawl ≥ 7 ngày sẽ biến mất khỏi kết quả tìm kiếm (vẫn còn trong DB cho tới khi xóa thủ công).
 
 ---
 
@@ -335,6 +371,8 @@ WHERE r.source_platform = 'phongtot';
 | `CRAWL_RATE_LIMIT_SECONDS` | Khuyến nghị | Delay giữa request crawl (mặc định 2s) |
 | `EXTRACT_RATE_LIMIT_SECONDS` | Khuyến nghị | Delay giữa LLM call (mặc định 6s — tránh 429) |
 | `EXTRACT_MAX_RETRIES` | Tùy chọn | Số lần retry khi LLM lỗi (mặc định 6) |
+| `SEARCH_MAX_AGE_DAYS` | Tùy chọn | Ẩn tin cũ hơn N ngày trong search/chat (mặc định 7, `0` = tắt) |
+| `CHAT_SEARCH_TOP_K` | Tùy chọn | Số tin tối đa chat agent trả về mỗi lần search DB (mặc định 15) |
 
 ---
 

@@ -17,6 +17,8 @@ from property_intel.models.listing import Listing
 from property_intel.pipeline.crawl.body_utils import prepare_body_for_llm
 from property_intel.pipeline.nhatot_parser import extract_nhatot_main_content, parse_nhatot_body
 from property_intel.pipeline.phongtot_parser import extract_phongtot_main_content, parse_phongtot_body
+from property_intel.pipeline.listing_media import extract_image_urls
+from property_intel.pipeline.freshness import parse_posted_at
 from property_intel.pipeline.vietnamese_utils import normalize_district, normalize_amenities
 
 logger = logging.getLogger(__name__)
@@ -181,6 +183,7 @@ def _listing_to_row(listing: Listing) -> ListingRow:
         short_description=listing.short_description,
         description_long=listing.description_long,
         price_note=listing.price_note,
+        images_json=list(listing.images),
         sentiment_notes=listing.sentiment_notes,
         extract_confidence=listing.extract_confidence,
         posted_at=listing.posted_at,
@@ -216,6 +219,7 @@ def _upsert_listing(session, listing: Listing) -> None:
     row.short_description = listing.short_description
     row.description_long = listing.description_long
     row.price_note = listing.price_note
+    row.images_json = list(listing.images)
     row.sentiment_notes = listing.sentiment_notes
     row.extract_confidence = listing.extract_confidence
     row.posted_at = listing.posted_at
@@ -320,6 +324,11 @@ def _build_listing_from_extract(
             }
         )
 
+    if "images" not in listing_kwargs:
+        listing_kwargs["images"] = extract_image_urls(
+            raw.body, source_platform=raw.source_platform
+        )
+
     return Listing(**listing_kwargs)
 
 
@@ -395,6 +404,18 @@ def _extract_one(
             listing = _build_listing_from_extract(
                 raw, result, parsed, body_for_llm, settings
             )
+            reference_at = raw.last_seen_at or raw.crawled_at
+            posted_at = parse_posted_at(raw.body, reference_at)
+            if posted_at is not None:
+                listing = listing.model_copy(update={"posted_at": posted_at})
+            if not listing.images:
+                listing = listing.model_copy(
+                    update={
+                        "images": extract_image_urls(
+                            raw.body, source_platform=raw.source_platform
+                        )
+                    }
+                )
             _upsert_listing(session, listing)
             raw.extracted = True
             raw.extract_status = "success"

@@ -20,11 +20,14 @@ from property_intel.pipeline.chat_tools import (
     format_page_context_for_prompt,
     format_user_preferences,
     is_follow_up_advise,
+    is_page_scoped_request,
     listing_ids_from_page,
     load_listings_for_comparison,
     match_result_to_card,
     merge_match_filters,
+    resolve_listing_result_ids,
     resolve_source_id,
+    should_query_full_db,
 )
 from property_intel.pipeline.match_query import chroma_rerank, parse_match_filters, sql_filter_listings
 from property_intel.pipeline.search_service import get_listing_by_source_id
@@ -35,20 +38,24 @@ PLANNER_PROMPT = """You plan the next action for a Vietnamese rental-room assist
 
 Choose ONE intent:
 
-- compare_results: FIRST-TIME side-by-side comparison of visible listings only.
-  Examples: "so sánh 3 phòng", "ưu nhược điểm từng căn" when not yet compared in this chat.
+- search: Query the FULL database for listings matching district, price, area, amenities, or free text.
+  Use for: "các trọ Nam Từ Liêm", "phòng dưới 4 triệu Cầu Giấy", "tìm trọ gần ĐHBK", any new filter/area question.
+  The UI page may show only 20 results — search MUST ignore that limit and query all stored listings.
 
-- advise: Recommendation/ranking using known listings + user-stated preferences.
-  Examples: "2 người 5tr/tháng nên chọn căn nào", "sinh viên cần phòng rộng có điều hòa",
-  follow-ups after compare when user shares budget or lifestyle constraints.
-  Do NOT use compare_results for these follow-ups.
+- compare_results: Side-by-side comparison ONLY when user refers to listings already in context:
+  "so sánh 3 phòng đang xem", "ưu nhược điểm các căn trên màn hình".
+  Do NOT use for district-wide questions — use search instead.
 
-- search: find NEW listings or change filters.
-- listing_detail: ONE specific listing by index or name.
+- advise: Recommendation/ranking after user stated preferences (budget, occupants, lifestyle).
+  Use last search results or compared listings — not limited to the UI page if a DB search ran earlier.
+
+- listing_detail: ONE specific listing by index ("căn thứ 2") or name from recent results.
+
 - general: greeting without listing data.
 
 Rules:
-- If compared_listing_ids matches current visible listings AND user adds constraints → advise.
+- District / price / area / "tìm trọ" questions → search (full DB), even if the UI page shows other filters.
+- compare_results ONLY when user clearly means current visible page ("đang hiển thị", "các phòng này").
 - For search, set search_text as self-contained Vietnamese query.
 - For listing_detail, set result_index (1-based) for "căn thứ 2".
 - Do NOT invent listing IDs."""
@@ -79,7 +86,7 @@ class UserPreferencesExtract(BaseModel):
 class ChatPlannerDecision(BaseModel):
     intent: Literal["search", "listing_detail", "compare_results", "advise", "general"] = "search"
     search_text: str | None = None
-    result_index: int | None = Field(default=None, ge=1, le=20)
+    result_index: int | None = Field(default=None, ge=1, le=30)
     source_id: str | None = None
 
 
@@ -96,6 +103,49 @@ class ChatState(TypedDict):
     tool_context: str
     reply: str
     updated_client_state: dict
+
+
+def _last_user_message(messages: list[dict[str, str]]) -> str:
+    for msg in reversed(messages):
+        if msg.get("role") == "user":
+            return (msg.get("content") or "").strip()
+    return ""
+
+
+def _execute_db_search(
+    search_text: str,
+    client: ChatClientState,
+    top_k: int,
+) -> tuple[list[ListingCard], MatchFilters, int, bool, str, ChatClientState]:
+    new_filters = parse_match_filters(search_text)
+    filters = merge_match_filters(client.last_filters, new_filters)
+    candidates = sql_filter_listings(filters)
+    results, used_fallback = chroma_rerank(search_text, candidates, filters, top_k=top_k)
+    cards = [match_result_to_card(r) for r in results]
+    context_lines = [
+        f"Search text: {search_text}",
+        f"Filters: {filters.model_dump()}",
+        f"Total matching in database: {len(candidates)}",
+        f"Chroma rerank fallback: {used_fallback}",
+        f"Top results shown to user: {len(cards)} (max {top_k})",
+        "Important: Tell the user how many listings match in total, then summarize the top results.",
+        "Listings:",
+    ]
+    for i, card in enumerate(cards, start=1):
+        context_lines.append(
+            f"  {i}. {card.source_id} | {card.title} | {card.district} | "
+            f"price={card.price_vnd} | area={card.area_min_m2}-{card.area_max_m2} | "
+            f"fees={'; '.join(card.service_fees_summary)} | phone={card.contact_phone}"
+        )
+    updated = client.model_copy(
+        update={
+            "last_filters": filters,
+            "last_result_ids": [c.source_id for c in cards],
+            "focused_source_id": None,
+            "compared_listing_ids": [],
+        }
+    )
+    return cards, filters, len(candidates), used_fallback, "\n".join(context_lines), updated
 
 
 def _plan_node(state: ChatState) -> ChatState:
@@ -134,6 +184,11 @@ def _plan_node(state: ChatState) -> ChatState:
     current_ids = listing_ids_from_page(page_context)
     compared_ids = client.get("compared_listing_ids") or []
     messages = state.get("messages") or []
+    last_user = _last_user_message(messages)
+    if should_query_full_db(last_user, decision.intent) and decision.intent != "search":
+        decision = decision.model_copy(
+            update={"intent": "search", "search_text": decision.search_text or last_user}
+        )
     if (
         decision.intent == "compare_results"
         and compared_ids
@@ -160,11 +215,7 @@ def _tool_node(state: ChatState) -> ChatState:
         if state.get("page_context")
         else None
     )
-    last_user = ""
-    for msg in reversed(state.get("messages") or []):
-        if msg.get("role") == "user":
-            last_user = msg.get("content") or ""
-            break
+    last_user = _last_user_message(messages)
 
     if decision.intent == "search":
         search_text = (decision.search_text or last_user).strip()
@@ -175,57 +226,57 @@ def _tool_node(state: ChatState) -> ChatState:
                 "cards": [],
                 "tool_calls": [],
             }
-        new_filters = parse_match_filters(search_text)
-        filters = merge_match_filters(client.last_filters, new_filters)
-        candidates = sql_filter_listings(filters)
-        results, used_fallback = chroma_rerank(search_text, candidates, filters, top_k=5)
-        cards = [match_result_to_card(r) for r in results]
-        context_lines = [
-            f"Search text: {search_text}",
-            f"Filters: {filters.model_dump()}",
-            f"SQL candidates: {len(candidates)}",
-            f"Chroma fallback: {used_fallback}",
-            f"Total shown: {len(cards)}",
-            "Listings:",
-        ]
-        for i, card in enumerate(cards, start=1):
-            context_lines.append(
-                f"  {i}. {card.source_id} | {card.title} | {card.district} | "
-                f"price={card.price_vnd} | area={card.area_min_m2}-{card.area_max_m2} | "
-                f"fees={'; '.join(card.service_fees_summary)} | phone={card.contact_phone}"
-            )
-        updated = client.model_copy(
-            update={
-                "last_filters": filters,
-                "last_result_ids": [c.source_id for c in cards],
-                "focused_source_id": None,
-            }
+        top_k = settings.chat_search_top_k
+        cards, filters, total, used_fallback, tool_context, updated = _execute_db_search(
+            search_text, client, top_k
         )
         return {
             **state,
             "filters": filters,
             "cards": cards,
             "tool_calls": ["search_listings"],
-            "candidates_count": len(candidates),
+            "candidates_count": total,
             "chroma_fallback": used_fallback,
-            "tool_context": "\n".join(context_lines),
+            "tool_context": tool_context,
             "updated_client_state": updated.model_dump(),
         }
 
     if decision.intent == "compare_results":
-        details, cards = load_listings_for_comparison(page_context, client.last_result_ids)
+        if should_query_full_db(last_user, "compare_results"):
+            top_k = settings.chat_search_top_k
+            cards, filters, total, used_fallback, tool_context, updated = _execute_db_search(
+                last_user, client, top_k
+            )
+            return {
+                **state,
+                "filters": filters,
+                "cards": cards,
+                "tool_calls": ["search_listings"],
+                "candidates_count": total,
+                "chroma_fallback": used_fallback,
+                "tool_context": tool_context,
+                "updated_client_state": updated.model_dump(),
+            }
+        details, cards = load_listings_for_comparison(
+            page_context, client.last_result_ids, last_user
+        )
         if not details:
             return {
                 **state,
-                "tool_context": "No listings on the current search page to compare.",
+                "tool_context": "No listings available to compare.",
                 "cards": [],
                 "tool_calls": [],
                 "updated_client_state": client.model_dump(),
             }
+        scope_label = (
+            "visible on the user's search page"
+            if is_page_scoped_request(last_user)
+            else "from the latest database search"
+        )
         context_lines = [
-            "Task: compare and recommend among listings visible on the user's search page.",
+            f"Task: compare listings {scope_label}.",
             f"Filters on page: {page_context.filters_summary if page_context else 'unknown'}",
-            f"Total search results: {page_context.total if page_context else len(details)}",
+            f"Total search results on UI page: {page_context.total if page_context else 'n/a'}",
             f"Comparing {len(details)} listing(s):",
         ]
         for i, detail in enumerate(details, start=1):
@@ -246,11 +297,43 @@ def _tool_node(state: ChatState) -> ChatState:
         }
 
     if decision.intent == "advise":
-        details, _cards = load_listings_for_comparison(page_context, client.last_result_ids)
+        details, _cards = load_listings_for_comparison(
+            page_context, client.last_result_ids, last_user
+        )
+        if not details and should_query_full_db(last_user, "advise"):
+            top_k = settings.chat_search_top_k
+            cards, filters, total, used_fallback, tool_context, updated = _execute_db_search(
+                last_user, client, top_k
+            )
+            details, _cards = load_listings_for_comparison(
+                page_context, updated.last_result_ids, last_user
+            )
+            if details:
+                prefs = _extract_user_preferences(messages, client.user_preferences, settings)
+                merged_prefs = {**client.user_preferences, **prefs}
+                context_lines = [
+                    "Task: ADVISE after database search.",
+                    f"Total matching in database: {total}",
+                    f"User preferences:\n{format_user_preferences(merged_prefs)}",
+                    f"Listings (compact):\n{format_compact_listings(details)}",
+                    "",
+                    "Reply style: direct recommendation first, brief why, note tradeoffs.",
+                ]
+                updated = updated.model_copy(update={"user_preferences": merged_prefs})
+                return {
+                    **state,
+                    "filters": filters,
+                    "cards": cards[:5],
+                    "tool_calls": ["search_listings", "advise"],
+                    "candidates_count": total,
+                    "chroma_fallback": used_fallback,
+                    "tool_context": "\n".join(context_lines),
+                    "updated_client_state": updated.model_dump(),
+                }
         if not details:
             return {
                 **state,
-                "tool_context": "No listings on page to advise about.",
+                "tool_context": "No listings available to advise about.",
                 "cards": [],
                 "tool_calls": [],
                 "updated_client_state": client.model_dump(),
@@ -258,9 +341,9 @@ def _tool_node(state: ChatState) -> ChatState:
         prefs = _extract_user_preferences(messages, client.user_preferences, settings)
         merged_prefs = {**client.user_preferences, **prefs}
         context_lines = [
-            "Task: ADVISE — recommend best fit based on user preferences. Do NOT re-list all rooms in full.",
+            "Task: ADVISE — recommend best fit based on user preferences.",
             f"User preferences:\n{format_user_preferences(merged_prefs)}",
-            f"Visible listings (compact):\n{format_compact_listings(details)}",
+            f"Listings (compact):\n{format_compact_listings(details)}",
             "",
             "Budget guidance for 2 occupants with AC:",
             "- Estimate utilities ~400,000–700,000 VND/month (electricity 4000/kWh, water per listing).",
@@ -284,9 +367,9 @@ def _tool_node(state: ChatState) -> ChatState:
         }
 
     if decision.intent == "listing_detail":
-        result_ids = client.last_result_ids
-        if page_context and page_context.visible_listings:
-            result_ids = [c.source_id for c in page_context.visible_listings]
+        result_ids = resolve_listing_result_ids(
+            client.last_result_ids, page_context, last_user
+        )
         source_id = resolve_source_id(
             explicit_id=decision.source_id,
             result_index=decision.result_index,
@@ -392,7 +475,15 @@ def _reply_node(state: ChatState) -> ChatState:
     context = state.get("tool_context") or ""
     tool_calls = state.get("tool_calls") or []
     extra = ""
-    if "compare_results" in tool_calls:
+    if "search_listings" in tool_calls:
+        extra = (
+            "\n\nSEARCH mode (full database). Rules:\n"
+            "- State total matching listings from tool context (e.g. 'Có 12 căn Nam Từ Liêm').\n"
+            "- Summarize top results; do not claim you only see the UI page.\n"
+            "- If total > shown, mention that only the best matches are listed.\n"
+            "- Use **Gợi ý:** for next steps (filter tighter, compare, ask detail)."
+        )
+    elif "compare_results" in tool_calls:
         extra = (
             "\n\nFIRST comparison (show once). Structure:\n"
             "1) One-line intro\n"

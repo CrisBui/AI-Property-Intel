@@ -1,0 +1,23 @@
+Terminal 1 — 9Router:
+
+9router --skip-update --no-browser --host 127.0.0.1
+Terminal 2 — Postgres + API:
+
+docker compose up -d
+source .venv/bin/activate
+uvicorn property_intel.api.app:app --reload --port 8000
+Bước 5: Kiểm tra
+Test 9Router trực tiếp:
+
+
+curl http://127.0.0.1:20128/v1/models \
+  -H "Authorization: Bearer <OPENAI_API_KEY>"
+curl http://127.0.0.1:20128/v1/chat/completions \
+  -H "Authorization: Bearer <OPENAI_API_KEY>" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"groq/llama-3.1-8b-instant","messages":[{"role":"user","content":"Xin chào"}]}'
+Test qua app:
+
+curl -X POST http://127.0.0.1:8000/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"messages":[{"role":"user","content":"Xin chào"}]}'

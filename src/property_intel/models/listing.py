@@ -26,6 +26,7 @@ class Listing(BaseModel):
     short_description: str | None = None
     description_long: str | None = None
     price_note: str | None = None
+    images: list[str] = Field(default_factory=list)
     sentiment_notes: str | None = None
     extract_confidence: float = 0.0
     posted_at: datetime | None = None

@@ -72,6 +72,9 @@ class ListingRow(Base):
     short_description: Mapped[str | None] = mapped_column(Text, nullable=True)
     description_long: Mapped[str | None] = mapped_column(Text, nullable=True)
     price_note: Mapped[str | None] = mapped_column(String(512), nullable=True)
+    images_json: Mapped[list] = mapped_column(
+        _json_list_type, default=list, nullable=False
+    )
     sentiment_notes: Mapped[str | None] = mapped_column(Text, nullable=True)
     extract_confidence: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
     posted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

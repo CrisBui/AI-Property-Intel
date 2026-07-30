@@ -9,6 +9,76 @@ from property_intel.models.listing import MatchFilters, MatchResult
 from property_intel.pipeline.crawl.base import platform_from_source_id
 from property_intel.pipeline.match_query import format_service_fee_summary
 from property_intel.pipeline.search_service import get_listing_by_source_id
+from property_intel.pipeline.vietnamese_utils import HANOI_DISTRICT_SLUGS, normalize_unicode
+
+
+def _fold_key(text: str) -> str:
+    import unicodedata
+
+    text = normalize_unicode(text).lower()
+    text = unicodedata.normalize("NFD", text)
+    return "".join(ch for ch in text if unicodedata.category(ch) != "Mn")
+
+
+_PAGE_SCOPED_MARKERS = (
+    "đang hiển thị",
+    "đang xem",
+    "trên màn hình",
+    "kết quả này",
+    "các phòng này",
+    "những phòng này",
+    "trang này",
+    "list này",
+    "màn hình này",
+)
+
+
+def is_page_scoped_request(user_text: str) -> bool:
+    """True when user refers to listings currently visible on the search UI page."""
+    lowered = _fold_key(user_text)
+    if any(marker in lowered for marker in _PAGE_SCOPED_MARKERS):
+        return True
+    if re.search(r"so\s*sanh", lowered) and not has_location_or_filter_cues(user_text):
+        return True
+    return False
+
+
+def has_location_or_filter_cues(user_text: str) -> bool:
+    lowered = _fold_key(user_text)
+    if "quan" in lowered or "khu vuc" in lowered:
+        return True
+    for canonical in HANOI_DISTRICT_SLUGS.values():
+        if _fold_key(canonical) in lowered:
+            return True
+    filter_cues = (
+        "tim ",
+        "co nhung",
+        "liet ke",
+        "bao nhieu can",
+        "cac tro",
+        "phong tro",
+        "duoi ",
+        "tren ",
+        "trieu",
+        "trieu/",
+        "m2",
+        "dieu hoa",
+        "gan ",
+    )
+    return any(cue in lowered for cue in filter_cues)
+
+
+def should_query_full_db(user_text: str, intent: str) -> bool:
+    """District/filter listing questions should hit Postgres, not only the UI page."""
+    if intent == "general":
+        return False
+    if is_page_scoped_request(user_text):
+        return False
+    if intent == "search":
+        return True
+    if intent in {"compare_results", "advise", "listing_detail"}:
+        return has_location_or_filter_cues(user_text)
+    return False
 
 
 def merge_match_filters(base: MatchFilters | None, new: MatchFilters) -> MatchFilters:
@@ -83,9 +153,9 @@ def format_page_context_for_prompt(page_context: SearchPageContext | None) -> st
     if page_context is None or not page_context.visible_listings:
         return "No listings visible on search page."
     lines = [
-        f"Search page: {page_context.total} total results, page {page_context.page}",
+        f"Search page (UI only — NOT the full database): {page_context.total} total, page {page_context.page}",
         f"Filters: {page_context.filters_summary or 'none'}",
-        f"Visible listings ({len(page_context.visible_listings)}):",
+        f"Visible on this page ({len(page_context.visible_listings)} of {page_context.total}):",
     ]
     for i, card in enumerate(page_context.visible_listings, start=1):
         lines.append(
@@ -116,16 +186,22 @@ def format_listing_detail_lines(detail: ListingDetail, index: int) -> list[str]:
 def load_listings_for_comparison(
     page_context: SearchPageContext | None,
     last_result_ids: list[str],
+    user_text: str = "",
 ) -> tuple[list[ListingDetail], list[ListingCard]]:
+    page_scoped = is_page_scoped_request(user_text)
     source_ids: list[str] = []
     cards: list[ListingCard] = []
 
-    if page_context and page_context.visible_listings:
+    if page_scoped and page_context and page_context.visible_listings:
         for card in page_context.visible_listings:
             source_ids.append(card.source_id)
             cards.append(card)
     elif last_result_ids:
         source_ids = list(last_result_ids)
+    elif page_context and page_context.visible_listings:
+        for card in page_context.visible_listings:
+            source_ids.append(card.source_id)
+            cards.append(card)
 
     details: list[ListingDetail] = []
     for source_id in source_ids:
@@ -135,6 +211,22 @@ def load_listings_for_comparison(
             if not cards:
                 cards.append(ListingCard.model_validate(detail.model_dump()))
     return details, cards
+
+
+def resolve_listing_result_ids(
+    client_last_result_ids: list[str],
+    page_context: SearchPageContext | None,
+    user_text: str = "",
+) -> list[str]:
+    """Prefer DB search results over the current UI page unless user is page-scoped."""
+    if is_page_scoped_request(user_text):
+        if page_context and page_context.visible_listings:
+            return [c.source_id for c in page_context.visible_listings]
+    if client_last_result_ids:
+        return list(client_last_result_ids)
+    if page_context and page_context.visible_listings:
+        return [c.source_id for c in page_context.visible_listings]
+    return []
 
 
 def format_messages_for_prompt(messages: list[dict[str, str]], limit: int = 12) -> str:

@@ -4,7 +4,7 @@ from functools import lru_cache
 from sqlalchemy import select
 
 from property_intel.db.json_utils import as_json_dict, as_json_list
-from property_intel.db.models import ListingRow
+from property_intel.db.models import ListingRow, RawListingRow
 from property_intel.db.session import session_scope
 from property_intel.config import get_settings
 from property_intel.llm import (
@@ -23,6 +23,7 @@ from property_intel.pipeline.vietnamese_utils import (
     HANOI_DISTRICT_SLUGS,
     normalize_district,
 )
+from property_intel.pipeline.freshness import is_listing_fresh, listing_freshness_at
 
 logger = logging.getLogger(__name__)
 
@@ -307,10 +308,28 @@ def _row_matches_landmark(row: ListingRow, landmark: str | None) -> bool:
 
 
 def sql_filter_listings(filters: MatchFilters, q: str | None = None) -> list[ListingRow]:
+    settings = get_settings()
+    max_age_days = settings.search_max_age_days
     with session_scope() as session:
         rows = session.scalars(select(ListingRow)).all()
+        raw_meta: dict[str, tuple] = {}
+        if max_age_days > 0:
+            raw_rows = session.scalars(select(RawListingRow)).all()
+            raw_meta = {
+                row.source_id: (row.last_seen_at, row.crawled_at)
+                for row in raw_rows
+            }
         candidates: list[ListingRow] = []
         for row in rows:
+            if max_age_days > 0:
+                last_seen_at, crawled_at = raw_meta.get(row.source_id, (None, None))
+                freshness = listing_freshness_at(
+                    last_seen_at=last_seen_at,
+                    posted_at=row.posted_at,
+                    crawled_at=crawled_at,
+                )
+                if not is_listing_fresh(freshness, max_age_days=max_age_days):
+                    continue
             if filters.price_max is not None:
                 if row.price_vnd is None or row.price_vnd > filters.price_max:
                     continue

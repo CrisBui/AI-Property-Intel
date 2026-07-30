@@ -44,6 +44,8 @@ class Settings(BaseSettings):
     extract_rate_limit_seconds: float = 8.0
     extract_max_retries: int = 4
     extract_enable_llm_summary: bool = True
+    chat_search_top_k: int = 15
+    search_max_age_days: int = 7
 
     @property
     def is_sqlite(self) -> bool:

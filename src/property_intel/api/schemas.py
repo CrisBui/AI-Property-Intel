@@ -45,8 +45,14 @@ class ListingCard(BaseModel):
     thumbnail_url: str | None = None
 
 
+class DescriptionSection(BaseModel):
+    label: str | None = None
+    body: str
+
+
 class ListingDetail(ListingCard):
     description_long: str | None = None
+    description_sections: list[DescriptionSection] = Field(default_factory=list)
     price_note: str | None = None
     near_landmarks: list[str] = Field(default_factory=list)
     service_fees: dict[str, int | str | None] = Field(default_factory=dict)

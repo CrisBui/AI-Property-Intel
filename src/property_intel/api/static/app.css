@@ -253,6 +253,18 @@ a { color: var(--accent); }
   font-size: 0.75rem;
   text-align: center;
   padding: 0.5rem;
+  overflow: hidden;
+}
+
+.card-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.card-thumb-empty {
+  padding: 0.5rem;
 }
 
 .card-body h3 {
@@ -339,12 +351,21 @@ a { color: var(--accent); }
   margin-bottom: 0.5rem;
 }
 
-.card-side .btn {
+.card-side .btn:not(.btn-platform) {
   display: inline-block;
   text-decoration: none;
   font-size: 0.85rem;
   background: var(--accent);
   color: #fff;
+}
+
+.card-side .btn-platform {
+  display: inline-block;
+  margin-top: 0.35rem;
+  text-decoration: none;
+  font-size: 0.85rem;
+  color: #fff;
+  border: 0;
 }
 
 .empty, .error, .loading {
@@ -402,7 +423,7 @@ a { color: var(--accent); }
   position: fixed;
   top: 0;
   right: 0;
-  width: min(480px, 100vw);
+  width: min(620px, 100vw);
   height: 100vh;
   background: var(--surface);
   border-left: 1px solid var(--border);
@@ -493,6 +514,123 @@ a { color: var(--accent); }
 .detail-actions .btn {
   text-align: center;
   text-decoration: none;
+}
+
+/* Detail gallery */
+.detail-gallery {
+  margin: -0.25rem 0 1rem;
+}
+
+.gallery-main {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #e2e8f0;
+}
+
+.gallery-main img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.gallery-thumbs {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+
+.gallery-thumb {
+  flex: 0 0 64px;
+  width: 64px;
+  height: 48px;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  overflow: hidden;
+  padding: 0;
+  cursor: pointer;
+  background: #e2e8f0;
+}
+
+.gallery-thumb.active {
+  border-color: var(--primary);
+}
+
+.gallery-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Service fee grid */
+.fee-grid {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.fee-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.55rem 0.75rem;
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.fee-label {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.fee-value {
+  text-align: right;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* Structured description blocks */
+.detail-section-desc .desc-blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.desc-block {
+  padding: 0.75rem 0.85rem;
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.desc-block-label {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--primary-dark);
+  margin-bottom: 0.35rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.desc-block-label::before {
+  content: "▸";
+  font-size: 0.85rem;
+  color: var(--primary);
+}
+
+.desc-block-body {
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--text);
+  white-space: normal;
+  word-break: break-word;
 }
 
 .btn-outline {

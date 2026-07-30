@@ -2,9 +2,16 @@ from __future__ import annotations
 
 from sqlalchemy import select
 
-from property_intel.api.schemas import ListingCard, ListingDetail, SearchRequest, SearchResponse, SearchSort
+from property_intel.api.schemas import (
+    DescriptionSection,
+    ListingCard,
+    ListingDetail,
+    SearchRequest,
+    SearchResponse,
+    SearchSort,
+)
 from property_intel.db.json_utils import as_json_dict, as_json_list
-from property_intel.db.models import ListingRow
+from property_intel.db.models import ListingRow, RawListingRow
 from property_intel.db.session import session_scope
 from property_intel.models.listing import MatchFilters
 from property_intel.pipeline.match_query import (
@@ -13,6 +20,7 @@ from property_intel.pipeline.match_query import (
     sql_filter_listings,
 )
 from property_intel.pipeline.crawl.base import platform_from_source_id, platform_from_url
+from property_intel.pipeline.listing_media import extract_image_urls, parse_description_sections
 from property_intel.pipeline.vietnamese_utils import normalize_district
 
 
@@ -61,9 +69,20 @@ def _resolve_source_platform(row: ListingRow) -> str:
     return platform_from_source_id(row.source_id)
 
 
-def listing_row_to_card(row: ListingRow) -> ListingCard:
+def _resolve_listing_images(row: ListingRow, raw_body: str | None = None) -> list[str]:
+    stored = as_json_list(getattr(row, "images_json", None) or [])
+    if stored:
+        return stored
+    if raw_body:
+        platform = _resolve_source_platform(row)
+        return extract_image_urls(raw_body, source_platform=platform)
+    return []
+
+
+def listing_row_to_card(row: ListingRow, images: list[str] | None = None) -> ListingCard:
     fees = as_json_dict(row.service_fees_json)
     lo, hi = _row_area_bounds(row)
+    photo_list = images if images is not None else _resolve_listing_images(row)
     return ListingCard(
         source_id=row.source_id,
         title=row.title,
@@ -80,26 +99,34 @@ def listing_row_to_card(row: ListingRow) -> ListingCard:
         source_url=row.source_url,
         source_platform=_resolve_source_platform(row),
         short_description=row.short_description,
-        thumbnail_url=None,
+        thumbnail_url=photo_list[0] if photo_list else None,
     )
 
 
-def listing_row_to_detail(row: ListingRow) -> ListingDetail:
+def listing_row_to_detail(row: ListingRow, raw_body: str | None = None) -> ListingDetail:
     fees = as_json_dict(row.service_fees_json)
     building_raw = as_json_dict(row.building_json)
     building: dict[str, int | None] = {}
     for key in ("floor_count", "room_count", "renovation_year", "deposit_vnd"):
         val = building_raw.get(key)
         building[key] = int(val) if val is not None else None
-    card = listing_row_to_card(row)
+    images = _resolve_listing_images(row, raw_body=raw_body)
+    card = listing_row_to_card(row, images=images)
+    desc = row.description_long or row.short_description
+    sections = [
+        DescriptionSection(label=section.get("label"), body=section.get("body") or "")
+        for section in parse_description_sections(desc)
+        if section.get("body")
+    ]
     return ListingDetail(
         **card.model_dump(),
         description_long=row.description_long,
+        description_sections=sections,
         price_note=row.price_note,
         near_landmarks=as_json_list(row.near_landmarks_json),
         service_fees=fees,
         building=building,
-        images=[],
+        images=images,
     )
 
 
@@ -110,8 +137,12 @@ def get_listing_by_source_id(source_id: str) -> ListingDetail | None:
         )
         if row is None:
             return None
+        raw_row = session.scalar(
+            select(RawListingRow).where(RawListingRow.source_id == source_id)
+        )
         session.expunge(row)
-        return listing_row_to_detail(row)
+        raw_body = raw_row.body if raw_row is not None else None
+        return listing_row_to_detail(row, raw_body=raw_body)
 
 
 def search_listings(request: SearchRequest) -> SearchResponse:

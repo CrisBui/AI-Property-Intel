@@ -15,6 +15,7 @@ from property_intel.pipeline.crawl.base import (
     source_id_from_url,
 )
 from property_intel.pipeline.crawl.body_utils import prepare_body_for_storage
+from property_intel.pipeline.listing_media import merge_crawl_images_into_body
 
 logger = logging.getLogger(__name__)
 
@@ -120,19 +121,19 @@ class FirecrawlSource(CrawlSource):
         if site in {"phongtot", "nhatot"}:
             return {
                 "url": url,
-                "formats": ["markdown", "links"],
+                "formats": ["markdown", "html", "links"],
                 "onlyMainContent": True,
                 "waitFor": 10000 if site == "nhatot" else 8000,
                 "timeout": 90000,
             }
         return {
             "url": url,
-            "formats": ["markdown", "links"],
+            "formats": ["markdown", "html", "links"],
             "onlyMainContent": False,
             "waitFor": 5000,
         }
 
-    def scrape_page(self, url: str) -> tuple[str, list[str]]:
+    def scrape_page(self, url: str) -> tuple[str, list[str], str]:
         with httpx.Client(timeout=90.0) as client:
             response = client.post(
                 f"{self._api_base}/v1/scrape",
@@ -148,13 +149,14 @@ class FirecrawlSource(CrawlSource):
                 raise RuntimeError(f"Firecrawl scrape failed for {url}: {payload}")
             data = payload.get("data") or {}
             body = (data.get("markdown") or data.get("content") or "").strip()
+            html = (data.get("html") or "").strip()
             links = [str(link) for link in (data.get("links") or [])]
-            if not body and not links:
+            if not body and not links and not html:
                 raise RuntimeError(f"Empty Firecrawl response for {url}")
-            return body, links
+            return body, links, html
 
     def scrape_markdown(self, url: str) -> str:
-        body, _ = self.scrape_page(url)
+        body, _links, _html = self.scrape_page(url)
         if not body:
             raise RuntimeError(f"Empty Firecrawl markdown for {url}")
         return body
@@ -166,8 +168,15 @@ class FirecrawlSource(CrawlSource):
         for url in urls:
             try:
                 site = platform_from_url(url)
+                body, links, html = self.scrape_page(url)
+                body = merge_crawl_images_into_body(
+                    body,
+                    html=html,
+                    links=links,
+                    source_platform=site,
+                )
                 body = prepare_body_for_storage(
-                    self.scrape_markdown(url),
+                    body,
                     max_chars=self._max_body_chars,
                     source_platform=site,
                 )

@@ -11,14 +11,21 @@ const PLATFORM_LABELS = {
   nhatot: "NhaTot",
 };
 
+function platformFromUrl(url) {
+  if (!url) return null;
+  const u = String(url).toLowerCase();
+  if (u.includes("nhatot.com") || u.includes("chotot.com")) return "nhatot";
+  if (u.includes("phongtot.com")) return "phongtot";
+  return null;
+}
+
 function resolvePlatform(item) {
+  const fromUrl = platformFromUrl(item?.source_url);
+  if (fromUrl) return fromUrl;
   if (item?.source_platform) return item.source_platform;
   const id = item?.source_id || "";
   if (id.startsWith("nhatot_")) return "nhatot";
   if (id.startsWith("phongtot_")) return "phongtot";
-  const url = item?.source_url || "";
-  if (url.includes("nhatot.com") || url.includes("chotot.com")) return "nhatot";
-  if (url.includes("phongtot.com")) return "phongtot";
   return "web";
 }
 
@@ -26,10 +33,17 @@ function platformLabel(item) {
   return PLATFORM_LABELS[resolvePlatform(item)] || "Nguồn";
 }
 
+function sourceLinkButtonHtml(item) {
+  if (!item?.source_url) return "";
+  const platform = resolvePlatform(item);
+  const label = PLATFORM_LABELS[platform] || "Xem tin";
+  return `<a class="btn btn-platform btn-platform-${platform}" href="${escapeHtml(item.source_url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${escapeHtml(label)}</a>`;
+}
+
 function formatPriceLabel(item) {
   if (item.price_vnd == null) return "Liên hệ";
   const price = formatVnd(item.price_vnd);
-  if (resolvePlatform(item) === "phongtot" || item.price_note) {
+  if (resolvePlatform(item) === "phongtot") {
     return `Từ ${price}`;
   }
   return `${price}/tháng`;
@@ -262,6 +276,122 @@ function buildSearchBody() {
   };
 }
 
+function renderCardThumb(item) {
+  const url = item.thumbnail_url;
+  if (!url) {
+    return '<div class="card-thumb card-thumb-empty">Chưa có ảnh</div>';
+  }
+  return `<div class="card-thumb"><img src="${escapeHtml(url)}" alt="" loading="lazy" /></div>`;
+}
+
+const SERVICE_FEE_ROWS = [
+  { key: "electricity_vnd_per_kwh", label: "Điện", unit: "đ/kWh" },
+  { key: "internet_vnd_per_room", label: "Internet", unit: "đ/phòng" },
+  { key: "laundry_vnd_per_person", label: "Giặt sấy", unit: "đ/người" },
+  { key: "sanitation_vnd_per_person", label: "Vệ sinh", unit: "đ/người" },
+  { key: "other_vnd_per_person", label: "Phí DV chung", unit: "đ/người" },
+];
+
+function formatWaterFeeRow(fees) {
+  if (!fees) return null;
+  const unit = fees.water_unit
+    || (fees.water_vnd_per_m3 != null ? "per_m3" : null)
+    || (fees.water_vnd_per_person != null ? "per_person" : null);
+  if (unit === "per_m3" && fees.water_vnd_per_m3 != null) {
+    return { label: "Nước", value: `${formatVnd(fees.water_vnd_per_m3)}/m³` };
+  }
+  if (unit === "per_person" && fees.water_vnd_per_person != null) {
+    return { label: "Nước", value: `${formatVnd(fees.water_vnd_per_person)}/người` };
+  }
+  if (unit === "included") {
+    return { label: "Nước", value: "Miễn phí" };
+  }
+  if (fees.water_raw) {
+    return { label: "Nước", value: String(fees.water_raw) };
+  }
+  return null;
+}
+
+function renderServiceFeesTable(fees) {
+  if (!fees || typeof fees !== "object") return "";
+  const rows = [];
+  const water = formatWaterFeeRow(fees);
+  if (water) rows.push(water);
+  SERVICE_FEE_ROWS.forEach(({ key, label, unit }) => {
+    const value = fees[key];
+    if (value != null && typeof value === "number") {
+      rows.push({ label, value: `${formatVnd(value)}/${unit.replace("đ/", "")}` });
+    }
+  });
+  if (!rows.length) return "";
+  return `
+    <div class="fee-grid">
+      ${rows.map((row) => `
+        <div class="fee-row">
+          <span class="fee-label">${escapeHtml(row.label)}</span>
+          <span class="fee-value">${escapeHtml(row.value)}</span>
+        </div>`).join("")}
+    </div>`;
+}
+
+function renderDescriptionSections(item) {
+  const sections = item.description_sections || [];
+  if (sections.length) {
+    return `
+      <div class="desc-blocks">
+        ${sections.map((section) => `
+          <div class="desc-block">
+            ${section.label ? `<div class="desc-block-label">${escapeHtml(section.label)}</div>` : ""}
+            <div class="desc-block-body">${formatDescBody(section.body)}</div>
+          </div>`).join("")}
+      </div>`;
+  }
+  const desc = item.description_long || item.short_description || "";
+  if (!desc) return "";
+  return `<div class="desc-blocks"><div class="desc-block"><div class="desc-block-body">${formatDescBody(desc)}</div></div></div>`;
+}
+
+function formatDescBody(text) {
+  if (!text) return "";
+  return escapeHtml(text)
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .join("<br>");
+}
+
+function renderDetailGallery(item) {
+  const images = item.images || [];
+  if (!images.length) return "";
+  const main = images[0];
+  const thumbs = images.slice(1, 8);
+  return `
+    <div class="detail-gallery">
+      <div class="gallery-main">
+        <img id="galleryMainImg" src="${escapeHtml(main)}" alt="" />
+      </div>
+      ${thumbs.length ? `
+      <div class="gallery-thumbs">
+        ${[main, ...thumbs].map((url, idx) => `
+          <button type="button" class="gallery-thumb${idx === 0 ? " active" : ""}" data-url="${escapeHtml(url)}" aria-label="Ảnh ${idx + 1}">
+            <img src="${escapeHtml(url)}" alt="" loading="lazy" />
+          </button>`).join("")}
+      </div>` : ""}
+    </div>`;
+}
+
+function bindGalleryHandlers(root) {
+  const mainImg = root.querySelector("#galleryMainImg");
+  if (!mainImg) return;
+  root.querySelectorAll(".gallery-thumb").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      mainImg.src = btn.dataset.url;
+      root.querySelectorAll(".gallery-thumb").forEach((el) => el.classList.remove("active"));
+      btn.classList.add("active");
+    });
+  });
+}
+
 function renderCard(item) {
   const layouts = item.room_layout_tags.map((t) => LAYOUT_LABELS[t] || t).join(", ");
   const amenities = item.amenities.map((a) => AMENITY_LABELS[a] || a).join(", ");
@@ -271,7 +401,7 @@ function renderCard(item) {
 
   return `
     <article class="card card-clickable" data-source-id="${escapeHtml(item.source_id)}" tabindex="0" role="button" aria-label="Xem chi tiết ${escapeHtml(item.title)}">
-      <div class="card-thumb">Chưa có ảnh</div>
+      ${renderCardThumb(item)}
       <div class="card-body">
         <div class="card-title-row">
           <h3>${escapeHtml(item.title)}</h3>
@@ -287,7 +417,7 @@ function renderCard(item) {
       <div class="card-side">
         <div class="card-price">${formatPriceLabel(item)}</div>
         <button type="button" class="btn btn-secondary btn-detail" data-source-id="${escapeHtml(item.source_id)}">Chi tiết</button>
-        ${item.source_url ? `<a class="btn btn-platform btn-platform-${resolvePlatform(item)}" href="${escapeHtml(item.source_url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${escapeHtml(platformLabel(item))}</a>` : ""}
+        ${sourceLinkButtonHtml(item)}
         ${item.contact_phone ? `<div class="card-tags" style="margin-top:0.5rem">${escapeHtml(item.contact_phone)}</div>` : ""}
       </div>
     </article>
@@ -318,9 +448,10 @@ function bindCardHandlers() {
 function renderDetailContent(item) {
   const layouts = item.room_layout_tags.map((t) => LAYOUT_LABELS[t] || t).join(", ");
   const amenities = item.amenities.map((a) => AMENITY_LABELS[a] || a);
-  const fees = item.service_fees_summary.length
-    ? item.service_fees_summary
-    : [];
+  const feeTable = renderServiceFeesTable(item.service_fees);
+  const feeFallback = !feeTable && item.service_fees_summary?.length
+    ? `<ul>${item.service_fees_summary.map((f) => `<li>${escapeHtml(f)}</li>`).join("")}</ul>`
+    : "";
   const building = item.building || {};
   const buildingParts = [];
   if (building.floor_count != null) buildingParts.push(`${building.floor_count} tầng`);
@@ -330,10 +461,10 @@ function renderDetailContent(item) {
   const isPhongTot = resolvePlatform(item) === "phongtot";
   const buildingTitle = isPhongTot ? "Tòa nhà" : "Thông tin thuê";
   const commonTitle = isPhongTot ? "Tiện ích chung" : "Nội thất / tiện ích";
-
-  const desc = item.description_long || item.short_description || "";
+  const descHtml = renderDescriptionSections(item);
 
   return `
+    ${renderDetailGallery(item)}
     <div class="drawer-head-meta">
       ${platformBadgeHtml(item)}
       <div class="drawer-price">${formatPriceLabel(item)}</div>
@@ -365,24 +496,24 @@ function renderDetailContent(item) {
       <h3>${escapeHtml(commonTitle)}</h3>
       <ul>${item.common_amenities.map((c) => `<li>${escapeHtml(c)}</li>`).join("")}</ul>
     </div>` : ""}
-    ${fees.length ? `
+    ${feeTable || feeFallback ? `
     <div class="detail-section">
       <h3>Phí dịch vụ</h3>
-      <ul>${fees.map((f) => `<li>${escapeHtml(f)}</li>`).join("")}</ul>
+      ${feeTable || feeFallback}
     </div>` : ""}
     ${item.near_landmarks && item.near_landmarks.length ? `
     <div class="detail-section">
       <h3>Gần</h3>
       <p>${escapeHtml(item.near_landmarks.join(", "))}</p>
     </div>` : ""}
-    ${desc ? `
-    <div class="detail-section">
-      <h3>Mô tả</h3>
-      <p>${escapeHtml(desc.slice(0, 1200))}</p>
+    ${descHtml ? `
+    <div class="detail-section detail-section-desc">
+      <h3>Mô tả chi tiết</h3>
+      ${descHtml}
     </div>` : ""}
     <div class="detail-actions">
       ${item.contact_phone ? `<a class="btn btn-primary" href="tel:${escapeHtml(item.contact_phone.replace(/\s/g, ""))}">Gọi ${escapeHtml(item.contact_phone)}</a>` : ""}
-      ${item.source_url ? `<a class="btn btn-outline btn-platform btn-platform-${resolvePlatform(item)}" href="${escapeHtml(item.source_url)}" target="_blank" rel="noopener">Xem trên ${escapeHtml(platformLabel(item))}</a>` : ""}
+      ${item.source_url ? `<a class="btn btn-outline btn-platform btn-platform-${resolvePlatform(item)}" href="${escapeHtml(item.source_url)}" target="_blank" rel="noopener">Xem trên ${escapeHtml(PLATFORM_LABELS[resolvePlatform(item)] || "nguồn")}</a>` : ""}
     </div>
   `;
 }
@@ -406,6 +537,7 @@ async function openDetail(sourceId) {
     if (!res.ok) throw new Error(data.detail || res.statusText);
     title.textContent = data.title;
     body.innerHTML = renderDetailContent(data);
+    bindGalleryHandlers(body);
   } catch (err) {
     body.innerHTML = `<div class="error">${escapeHtml(err.message)}</div>`;
   }
