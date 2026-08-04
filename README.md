@@ -1,6 +1,6 @@
 # AI Property Intelligence
 
-Learning MVP — hệ thống thông minh thị trường & gợi ý phòng trọ quanh khu **ĐHBK Hà Nội**, kết hợp:
+Learning MVP — hệ thống thông minh thị trường & gợi ý phòng trọ quanh khu **Hà Nội**, kết hợp:
 
 - **PostgreSQL** — lưu tin thô + dữ liệu có cấu trúc, filter cứng (giá, tiện ích)
 - **ChromaDB** — vector search rerank

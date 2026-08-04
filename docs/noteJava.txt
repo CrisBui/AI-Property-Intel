@@ -1,0 +1,85 @@
+PHẦN 1: GIẢI THÍCH CHI TIẾT CÁC FILE CODE (TỪ DƯỚI LÊN)
+1. Tầng Entity: Listing.java (Nền tảng lưu trữ)
+Chức năng: Đại diện cho bảng listings trong cơ sở dữ liệu PostgreSQL. Mỗi thuộc tính trong class này tương ứng với một cột trong bảng (ví dụ priceVnd, district, amenitiesJson...).
+
+Annotation quan trọng:
+
+@Entity: Báo cho Spring Boot biết đây là một thực thể cơ sở dữ liệu (JPA Entity).
+
+@Table(name = "listings"): Chỉ định ánh xạ chính xác vào bảng tên là listings trong PostgreSQL.
+
+@Data (Lombok): Tự động sinh ra toàn bộ các hàm Getter, Setter, toString(), equals(), hashCode() mà không cần viết thủ công.
+
+2. Tầng Repository: ListingRepository.java (Giao tiếp Database)
+Chức năng: Là một giao diện trung gian dùng để thực hiện các câu lệnh thao tác với cơ sở dữ liệu (CRUD: Thêm, Sửa, Xóa, Tìm kiếm).
+
+Đặc điểm: Kế thừa JpaRepository<Listing, Long> (cung cấp sẵn các hàm tìm kiếm theo ID, lưu, xóa...) và JpaSpecificationExecutor<Listing> (hỗ trợ viết các câu lệnh động, lọc phức tạp sau này).
+
+3. Tầng DTO: SearchRequest.java & ListingCardResponse.java (Khuôn mẫu dữ liệu)
+SearchRequest.java (Request): Khuôn mẫu hứng dữ liệu từ Client gửi lên (gồm các tiêu chí như minPrice, maxPrice, districts, phân trang page, size, sắp xếp sort).
+
+ListingCardResponse.java (Response): Khuôn mẫu đóng gói dữ liệu trả về cho Client (chỉ chứa các trường gọn gàng cần thiết để hiển thị lên thẻ card giao diện như title, priceVnd, district, shortDescription,...).
+
+4. Tầng Mapper: ListingMapper.java (Chuyển đổi dữ liệu tự động)
+Chức năng: Sử dụng thư viện MapStruct để tự động chuyển đổi đối tượng dữ liệu từ tầng Database (Entity) sang tầng hiển thị (Response DTO) mà không cần viết tay từng câu lệnh set....
+
+Annotation quan trọng: @Mapper(componentModel = "spring") để biến interface này thành một Spring Bean, cho phép tiêm (inject) vào Service.
+
+5. Tầng Service: SearchService.java & SearchServiceImpl.java (Xử lý nghiệp vụ cốt lõi)
+SearchService.java (Interface): Bản cam kết quy định các chức năng nghiệp vụ mà hệ thống cung cấp (ví dụ: hàm searchListings). Giúp phân rã code, tuân thủ nguyên lý hướng đối tượng.
+
+SearchServiceImpl.java (Class hiện thực): Nơi viết logic thực tế:
+
+Nhận SearchRequest.
+
+Xử lý logic sắp xếp (Sort) theo giá tăng/giảm.
+
+Đóng gói phân trang bằng PageRequest.of(...) của Spring.
+
+Gọi ListingRepository xuống Database lấy dữ liệu dạng Page<Listing>.
+
+Dùng ListingMapper để chuyển đổi toàn bộ danh sách đó sang Page<ListingCardResponse> rồi trả về.
+
+6. Tầng Controller: SearchController.java (Cổng tiếp nhận HTTP Request)
+Chức năng: Lắng nghe các yêu cầu gọi API từ phía Client (Frontend/Postman).
+
+Cách hoạt động: Nhận request POST /api/search kèm theo dữ liệu JSON, gọi sang SearchService, sau đó bọc kết quả vào ResponseEntity trả về mã HTTP 200 OK kèm cục JSON kết quả.
+
+PHẦN 2: TRẢ LỜI CÂU HỎI NGOÀI LỀ
+1. Tại sao có thể khởi tạo đối tượng từ 1 Interface (SearchService)?
+Thực tế, bạn không bao giờ khởi tạo trực tiếp được một Interface trong Java (vì Interface không có code thực thi bên trong, gọi new SearchService() sẽ lập tức báo lỗi biên dịch).
+
+Cái bạn đang viết trong Controller là khai báo biến kiểu Interface:
+
+Java
+private final SearchService searchService;
+Bản chất lúc chạy (Runtime): Spring Boot áp dụng tính đa hình (Polymorphism) và cơ chế Dependency Injection. Khi khởi động, Spring quét thấy class SearchServiceImpl có từ khóa implements SearchService và đánh dấu @Service, nó sẽ tự động tạo một đối tượng (instance) của SearchServiceImpl rồi "tiêm" (nhét) ngầm đối tượng đó vào biến searchService cho bạn.
+
+Do đó, khi bạn gọi searchService.searchListings(...), thực chất Java đang chạy code bên trong SearchServiceImpl.
+
+2. Các Annotation có vai trò và chức năng gì?
+Annotation (các chữ có dấu @ phía trước) giống như những "tấm biển chỉ đường" hoặc "thẻ căn cước" bạn gắn vào code để hướng dẫn cho Spring Boot biết phải đối xử với class/phương thức đó như thế nào:
+
+Nhóm định nghĩa thành phần (Stereotype Annotations):
+
+@RestController: Báo cho Spring biết đây là một Controller chuyên phục vụ API (trả về dữ liệu dạng JSON/XML thay vì trả về giao diện HTML).
+
+@Service: Báo cho Spring biết đây là tầng chứa logic nghiệp vụ, tự động đưa vào quản lý chung trong thùng chứa Bean (Application Context).
+
+@Repository: Báo cho Spring biết đây là tầng giao tiếp database, đồng thời hỗ trợ bắt các lỗi liên quan đến cơ sở dữ liệu chuyển đổi sang ngoại lệ chuẩn của Spring.
+
+Nhóm định nghĩa đường dẫn & Dữ liệu:
+
+@RequestMapping("/api"): Gom nhóm đường dẫn gốc cho các API trong Controller (ví dụ mọi API ở đây đều bắt đầu bằng /api/...).
+
+@PostMapping("/search"): Định nghĩa đây là một API nhận phương thức HTTP POST đi kèm đường dẫn /api/search.
+
+@RequestBody: Ra lệnh cho Spring bắt buộc phải đọc dữ liệu JSON được gửi ngầm trong phần thân (Body) của HTTP Request rồi tự động "ép kiểu" (deserialize) thành object Java (SearchRequest).
+
+Nhóm Lombok & MapStruct:
+
+@Data: Tự sinh code get/set/tostring ngầm lúc biên dịch.
+
+@RequiredArgsConstructor: Tự động sinh Constructor chứa các trường có từ khóa final, giúp Spring thực hiện tiêm phụ thuộc (DI) cực kỳ gọn gàng mà không cần viết hàm khởi tạo thủ công.
+
+@Mapper(componentModel = "spring"): Biến interface thành một Spring Bean để dùng chungz

@@ -1,0 +1,15 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/property_intel
+    username: property_intel
+    password: property_intel
+  jpa:
+    hibernate:
+      ddl-auto: validate  # Chỉ đọc/kiểm thử schema, không tự sửa cấu trúc DB hiện tại
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true

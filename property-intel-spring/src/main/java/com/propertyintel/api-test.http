@@ -1,0 +1,9 @@
+### Test tìm kiếm và phân trang danh sách phòng trọ
+POST http://localhost:8080/api/search
+Content-Type: application/json
+
+{
+  "page": 1,
+  "size": 5,
+  "sort": "price_asc"
+}
